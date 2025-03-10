@@ -30,7 +30,7 @@ function dominance(_data::AbstractDataFrame,
     dep::Symbol, # dependent variable name
     indeps::Vector; # independent variables in a vector, sets are allowed in tuples
     covars=[],
-    fitstat=:Nagelkerke,
+    fitstat=:McFadden,
     link=nothing,
     family=nothing)
 
