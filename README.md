@@ -1,4 +1,4 @@
-# Dominance
+# Dominance Analysis
  A package for conducting dominance analysis. An excellent introduction by Joseph Luchman can be found 
  at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. 
 
@@ -23,8 +23,9 @@
     LogLink, IdentifyLink, etc. If `family` option is not specified, `link` will
     be used to determine the type of GLM model
 - family - a distribution family. If not specified, a distribution will be chosen
+- fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). Default is :McFadden.
 
-All variable are expected to be in Symbols.
+All variables must be in Symbols.
 
 ## Example
 
@@ -111,6 +112,53 @@ Conditional dominance:
      trunk │ 0.0988  0.0437  0.0062  0.0064
    foreign │ 0.0024  0.0813  0.1225  0.1462
      Set 1 │ 0.3776  0.3236  0.2711  0.2403
+───────────┴────────────────────────────────
+
+```
+
+### 3. Logistic regression with a set of variables
+
+```
+julia> using Statistics, GLM
+julia> auto.pricelow = auto.price .< mean(auto.price);
+julia> dominance(auto, :pricelow, [:mpg, :trunk, :foreign, (:weight, :turn)], link=LogitLink)
+A total of 15 regressions will be estimated.
+
+Number of observations      =              74
+Number of regression models =              15
+Overall Fit Statistic       =          0.4089
+
+Set    1 = (:weight, :turn)
+
+
+Dominance Statistics and Ranking:
+──────────┬───────────────────────────────────────────────────────────────
+ pricelow │ Dominance Statistic  Standardized Dominance           Ranking 
+──────────┼───────────────────────────────────────────────────────────────
+      mpg │              0.0750                  0.1835                 3
+    trunk │              0.0158                  0.0386                 4
+  foreign │              0.1419                  0.3470                 2
+    Set 1 │              0.1762                  0.4309                 1
+──────────┴───────────────────────────────────────────────────────────────
+
+Complete dominance:
+────────────┬────────────────────────────
+ dominates? │ mpg  trunk  foreign  Set 1 
+────────────┼────────────────────────────
+        mpg │   0      0        0     -1
+      trunk │   0      0        0     -1
+    foreign │   0      0        0      0
+      Set 1 │   1      1        0      0
+────────────┴────────────────────────────
+
+Conditional dominance:
+───────────┬────────────────────────────────
+ Variables │      1       2       3       4 
+───────────┼────────────────────────────────
+       mpg │ 0.1253  0.1133  0.0603  0.0012
+     trunk │ 0.0325  0.0251  0.0034  0.0022
+   foreign │ 0.0202  0.1384  0.1923  0.2167
+     Set 1 │ 0.1571  0.1910  0.1845  0.1723
 ───────────┴────────────────────────────────
 
 ```
