@@ -259,4 +259,7 @@ https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html
 
 linear regression - R²
 logistic regression - Pseudo R² (McFadden, Nagelkerke, Estrella, Cox-Snell all produce the same dominance relationship)
+
+Joseph Luchman's Introduction to Dominance Analysis on CRAN at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html
 """
+
