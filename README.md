@@ -13,7 +13,7 @@
 
 ### Options:
 - df - input data in a DataFrame
-- dep - dependent variable (Symbol)
+- dep - dependent variable
 - indeps - a vector of independent variables. A set of variables can be
     specified as a tuple within the vector
 - covars - a vector of covariates that will be included in all models.
@@ -23,7 +23,11 @@
     be used to determine the type of GLM model
 - family - a distribution family. If not specified, a distribution will be chosen
 
+All variable are expected to be in Symbols.
+
 ## Example
+
+### 1. Linear regression
 
 ```
 julia> dominance(auto,:price, [:mpg, :trunk, :foreign, :weight])
@@ -64,6 +68,9 @@ Conditional dominance:
     weight │ 0.2901  0.2553  0.2236  0.2149
 ───────────┴────────────────────────────────
 ```
+
+### 2. Linear regression with a set of variables
+
 
 
 
