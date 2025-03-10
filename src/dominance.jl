@@ -84,7 +84,7 @@ function dominance(_data::AbstractDataFrame,
     # additional contribution of each indep
     for i = 1:nreg
         for j = 1:length(indeps)
-            addterms = sort(unique(vcat(fs[i, :terms], (isa(indeps[j], Tuple) ? collect(indeps[j]) : indeps[j]))))
+            addterms = sort(unique(untuple(vcat(fs[i, :terms], indeps[j]))))
             ind = findfirst(x -> x == addterms, fs.terms_sorted)
             if i != ind
                 fs[i, Symbol(j)] = fs[ind, :r2m] - fs[i, :r2m]
