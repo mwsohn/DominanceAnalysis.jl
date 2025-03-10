@@ -71,6 +71,48 @@ Conditional dominance:
 
 ### 2. Linear regression with a set of variables
 
+```
+julia> dominance(auto, :price, [:mpg, :trunk, :foreign, (:weight, :turn)])
+A total of 15 regressions will be estimated.
+
+Number of observations      =              74
+Number of regression models =              15
+Overall Fit Statistic       =          0.5336
+
+Set    1 = (:weight, :turn)
+
+
+Dominance Statistics and Ranking:
+─────────┬───────────────────────────────────────────────────────────────
+   price │ Dominance Statistic  Standardized Dominance           Ranking 
+─────────┼───────────────────────────────────────────────────────────────
+     mpg │              0.1036                  0.1941                 2
+   trunk │              0.0388                  0.0727                 4
+ foreign │              0.0881                  0.1651                 3
+   Set 1 │              0.3031                  0.5681                 1
+─────────┴───────────────────────────────────────────────────────────────
+
+Complete dominance:
+────────────┬────────────────────────────
+ dominates? │ mpg  trunk  foreign  Set 1 
+────────────┼────────────────────────────
+        mpg │   0      0        0     -1
+      trunk │   0      0        0     -1
+    foreign │   0      0        0     -1
+      Set 1 │   1      1        1      0
+────────────┴────────────────────────────
+
+Conditional dominance:
+───────────┬────────────────────────────────
+ Variables │      1       2       3       4 
+───────────┼────────────────────────────────
+       mpg │ 0.2196  0.1373  0.0574  0.0000
+     trunk │ 0.0988  0.0437  0.0062  0.0064
+   foreign │ 0.0024  0.0813  0.1225  0.1462
+     Set 1 │ 0.3776  0.3236  0.2711  0.2403
+───────────┴────────────────────────────────
+
+```
 
 
 
