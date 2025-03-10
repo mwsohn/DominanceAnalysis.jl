@@ -58,7 +58,7 @@ function dominance(_data::AbstractDataFrame,
         vars = indeps[vindex]
 
         fs[i, :terms] = vars
-        fs[i, :terms_sorted] = sort(vars)
+        fs[i, :terms_sorted] = sort(untuple(vars))
         fs[i, :nterms] = length(vars)
 
         if covars != nothing
@@ -190,6 +190,18 @@ function Base.show(io::IO, dom::Domin)
 
 end
 
+function untuple(vec)
+    vv = []
+    for v in vec
+        if isa(v, Tuple)
+            vv = vcat(vv, v...)
+        else
+            push!(vv, v)
+        end
+    end
+    return vv
+end
+
 function get_r2add(df, terms, indepvars)
     for i = 1:size(df, 1)
         if df[i, :terms_sorted] == indepvars && terms != indepvars
@@ -200,14 +212,7 @@ function get_r2add(df, terms, indepvars)
 end
 
 function get_df(_df, depvar, indepvars, all)
-    vv = []
-    for v in indepvars
-        if isa(v, Tuple)
-            vv = vcat(vv, v...)
-        else
-            push!(vv, v)
-        end
-    end
+    vv = untuple(indepvars)
 
     if all != nothing
         vv = vcat(depvar, vv, all)
@@ -224,14 +229,7 @@ function get_formula(dep, indeps)
         return Term(dep) ~ term(1)
     end
 
-    vv = []
-    for v in indeps
-        if isa(v, Tuple)
-            vv = vcat(vv, v...)
-        else
-            push!(vv, v)
-        end
-    end
+    vv = untuple(indeps)
 
     return Term(dep) ~ sum(term.(vv))
 end
