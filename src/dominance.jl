@@ -37,6 +37,16 @@ function dominance(_data::AbstractDataFrame,
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
 
+    # link and family
+    if link != nothing
+        if family == nothing
+            family = canonical[link]
+        end
+        if !in(fitstat, [:McFadden, :Nagelkerke])
+            throw(ArgumentError(fitstat, " is not allowed"))
+        end
+    end
+
     # get all combination of the indeps vector
     nvars = length(indeps)
     vvec = collect(combinations(collect(1:nvars)))
@@ -53,6 +63,14 @@ function dominance(_data::AbstractDataFrame,
         fs[!, Symbol(i)] = Vector{Union{Missing,Float64}}(missing, nreg)
     end
 
+    # fit stats for null models
+    fm = get_formula(dep, covars)
+    if link == nothing
+        fitnull = r2(lm(fm, df))
+    else
+        fitnull = r2(glm(fm, df, family(), link()), fitstat)
+    end
+
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
@@ -63,17 +81,9 @@ function dominance(_data::AbstractDataFrame,
         fm = get_formula(dep, vcat(vars, covars))
 
         if link == nothing
-            tmpreg = lm(fm, df)
-            fs[i, :r2m] = r2(tmpreg)
+            fs[i, :r2m] = r2(lm(fm, df))
         else
-            if family == nothing
-                family = canonical[link]
-            end
-            if !in(fitstat, [:McFadden, :Nagelkerke])
-                throw(ArgumentError(fitstat, " is not allowed"))
-            end
-            tmpreg = glm(fm, df, family(), link())
-            fs[i, :r2m] = r2(tmpreg, fitstat)
+            fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
         end
     end
 
@@ -108,7 +118,7 @@ function dominance(_data::AbstractDataFrame,
 
     # conditional dominance
     conditional_dom = zeros(Float64, nvars, nvars)
-    conditional_dom[:, 1] = fs.r2m[1:nvars]
+    conditional_dom[:, 1] = fs.r2m[1:nvars] .- fitnull
     for subdf in groupby(fs, :nterms)
         for i = 1:nvars
             j = subdf[1, :nterms]
