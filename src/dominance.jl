@@ -8,7 +8,7 @@ struct Domin
     nobs::Int64
     nreg::Int64
     dep::Symbol
-    indeps::Vector{Symbol}
+    indeps::Vector{Any}
     covars::Vector{Symbol}
     fit_overall::Float64
     fitstat::AbstractDataFrame
