@@ -1,7 +1,8 @@
 # Dominance
- A package for conducting dominance analysis.
+ A package for conducting dominance analysis. An excellent introduction by Joseph Luchman can be found 
+ at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. 
 
- ## Installation
+  ## Installation
 
  `] add https://github.com/mwsohn/Dominance.jl`
 
@@ -114,5 +115,18 @@ Conditional dominance:
 
 ```
 
+## References
+
+Joseph N. Luchman, 2013. "DOMIN: Stata module to conduct dominance analysis," Statistical Software Components S457629, Boston College Department of Economics, revised 07 Jan 2025. 
+
+Azen R, Budescu DV. The dominance analysis approach for comparing predictors in multiple regression. Psychol Methods. 2003 Jun;8(2):129-48. doi: 10.1037/1082-989x.8.2.129. PMID: 12924811.
+
+Azen, R., & Traxel, N. (2009). Using Dominance Analysis to Determine Predictor Importance in Logistic Regression. Journal of Educational and Behavioral Statistics, 34(3), 319-347. https://doi.org/10.3102/1076998609332754 (Original work published 2009)
+
+Azen, Razia, David V Budescu, and Benjamin Reiser. 2001. “Criticality of Predictors in Multiple Regression.” British Journal of Mathematical and Statistical Psychology 54 (2): 201–25. https://doi.org/10.1348/000711001159483.
+
+Budescu, David V. 1993. “Dominance Analysis: A New Approach to the Problem of Relative Importance of Predictors in Multiple Regression.” Psychological Bulletin 114 (3): 542–51. https://doi.org/10.1037/0033-2909.114.3.542.
+
+Grömping, Ulrike. 2007. “Estimators of Relative Importance in Linear Regression Based on Variance Decomposition.” The American Statistician 61 (2): 139–47. https://doi.org/10.1198/000313007X188252.
 
 
