@@ -1,0 +1,12 @@
+name = "Dominance"
+uuid = "61e87ef1-9b8b-4988-a4a2-86a1869cf33a"
+
+[deps]
+Combinatorics = "861a8166-3701-5b0c-9a16-15d98fcdc6aa"
+Stella = "b1cd83c4-5688-5aa2-8927-7445e86cd0e2"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+GLM = "38e38edf-8417-5370-95a0-9cbb8c7f171a"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+StatsAPI = "82ae8749-77ed-4fe6-ae5f-f523153014b0"
+Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
+PrettyTables = "08abe8d2-0d0c-5749-adfa-8a2ac140af0d"
