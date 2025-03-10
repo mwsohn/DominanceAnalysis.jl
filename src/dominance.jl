@@ -34,11 +34,10 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing)
 
-    # defaults
+    # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
 
     # get all combination of the indeps vector
-    # indeps = vcat(1, indeps)  # intercept
     nvars = length(indeps)
     vvec = collect(combinations(collect(1:nvars)))
     nreg = length(vvec)
@@ -149,11 +148,32 @@ function Base.show(io::IO, dom::Domin)
 
     nvars = length(dom.indeps)
 
+    # define sets
+    sets = []
+    indepnames = []
+    n = 1
+    for i = 1:nvars
+        if isa(dom.indeps[i], Tuple)
+            push!(sets, dom.indeps[i])
+            push!(indepnames, string("Set ", n))
+            n += 1
+        else
+            push!(indepnames, string(dom.indeps[i]))
+        end
+    end
+
+    if length(sets) > 0
+        for i = 1:length(sets)
+            println(io, "Set ", @sprintf("%4d", i), " = ", sets[i])
+        end
+    end
+    print(io, "\n")
+
     println(io, "\nDominance Statistics and Ranking:")
     pretty_table(io,
         dom.domstat,
-        header=["Dominance Statistic", "Standardized Dominance", "          Ranking"],
-        row_labels=dom.indeps,
+        header=["Dominance Statistic", "Standardized Dominance", "         Ranking"],
+        row_labels=indepnames,
         row_label_column_title=string(dom.dep),
         formatters=(ft_printf("%6.4f", 1:2), ft_printf("%4d", 3)),
         hlines=[0, 1, nvars + 1],
@@ -164,8 +184,8 @@ function Base.show(io::IO, dom::Domin)
     println(io, "\nComplete dominance:")
     pretty_table(io,
         dom.comstat,
-        header=dom.indeps,
-        row_labels=dom.indeps,
+        header=indepnames,
+        row_labels=indepnames,
         row_label_column_title="dominates?",
         hlines=[0, 1, nvars + 1],
         vlines=[1]
@@ -176,7 +196,7 @@ function Base.show(io::IO, dom::Domin)
     pretty_table(io,
         dom.constat,
         header=collect(1:nvars),
-        row_labels=dom.indeps,
+        row_labels=indepnames,
         row_label_column_title="Variables",
         formatters=ft_printf("%6.4f", 1:nvars),
         hlines=[0, 1, nvars + 1],
