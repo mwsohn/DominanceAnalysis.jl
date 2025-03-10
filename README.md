@@ -23,7 +23,7 @@
     LogLink, IdentifyLink, etc. If `family` option is not specified, `link` will
     be used to determine the type of GLM model
 - family - a distribution family. If not specified, a distribution will be chosen
-- fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). Default is :McFadden.
+- fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). The default is :McFadden.
 
 All variables must be in Symbols.
 
