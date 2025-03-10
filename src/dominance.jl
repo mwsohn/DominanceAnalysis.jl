@@ -172,7 +172,7 @@ function Base.show(io::IO, dom::Domin)
     println(io, "\nDominance Statistics and Ranking:")
     pretty_table(io,
         dom.domstat,
-        header=["Dominance Statistic", "Standardized Dominance", "         Ranking"],
+        header=["General Dominance", "Standardized Dominance", "         Ranking"],
         row_labels=indepnames,
         row_label_column_title=string(dom.dep),
         formatters=(ft_printf("%6.4f", 1:2), ft_printf("%4d", 3)),
