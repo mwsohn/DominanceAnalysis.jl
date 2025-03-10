@@ -29,13 +29,13 @@ canonical = Dict(
 function dominance(_data::AbstractDataFrame,
     dep::Symbol, # dependent variable name
     indeps::Vector; # independent variables in a vector, sets are allowed in tuples
-    covars=nothing,
+    covars=[],
     fitstat=:Nagelkerke,
     link=nothing,
     family=nothing)
 
     # defaults
-    df = get_df(_data, dep, indeps, covars)
+    df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
 
     # get all combination of the indeps vector
     # indeps = vcat(1, indeps)  # intercept
@@ -61,10 +61,7 @@ function dominance(_data::AbstractDataFrame,
         fs[i, :terms_sorted] = sort(untuple(vars))
         fs[i, :nterms] = length(vars)
 
-        if covars != nothing
-            vars = vcat(vars, covars)
-        end
-        fm = get_formula(dep, vars)
+        fm = get_formula(dep, vcat(vars, covars))
 
         if link == nothing
             tmpreg = lm(fm, df)
@@ -133,7 +130,7 @@ function dominance(_data::AbstractDataFrame,
         nreg,
         dep,
         indeps,
-        covars == nothing ? [] : covars,
+        covars,
         fs[nreg, :r2m],
         select(fs, Not(:terms_sorted)),
         domstat,
@@ -209,18 +206,6 @@ function get_r2add(df, terms, indepvars)
         end
     end
     return missing
-end
-
-function get_df(_df, depvar, indepvars, all)
-    vv = untuple(indepvars)
-
-    if all != nothing
-        vv = vcat(depvar, vv, all)
-    else
-        vv = vcat(depvar, vv)
-    end
-    df2 = _df[:, vv]
-    return df2[completecases(df2), :]
 end
 
 function get_formula(dep, indeps)
