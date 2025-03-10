@@ -240,13 +240,10 @@ end
 
 function get_formula(dep, indeps)
     # construct another vector that untuple all variables
-    if indeps == nothing
+    if indeps == []
         return Term(dep) ~ term(1)
     end
-
-    vv = untuple(indeps)
-
-    return Term(dep) ~ sum(term.(vv))
+    return Term(dep) ~ sum(term.(untuple(indeps)))
 end
 
 end
