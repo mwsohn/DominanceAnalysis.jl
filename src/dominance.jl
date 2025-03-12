@@ -32,7 +32,9 @@ function dominance(_data::AbstractDataFrame,
     covars=[],
     fitstat=:McFadden,
     link=nothing,
-    family=nothing)
+    family=nothing,
+    verbose=true,
+    kwargs...)
 
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
@@ -66,13 +68,22 @@ function dominance(_data::AbstractDataFrame,
     # fit stats for null models
     fm = get_formula(dep, covars)
     if link == nothing
-        fitnull = r2(lm(fm, df))
+        fitnull = r2(lm(fm, df, kwargs...))
     else
-        fitnull = r2(glm(fm, df, family(), link()), fitstat)
+        fitnull = r2(glm(fm, df, family(), link(), kwargs...), fitstat)
     end
 
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
+
+        if nreg >= 100 && verbose 
+            if mod(i,10) == 0
+                print(".")
+            end
+            if mod(i,800) == 0
+                print("\n")
+            end
+        end
 
         fs[i, :terms] = vars
         fs[i, :terms_sorted] = sort(untuple(vars))
@@ -81,9 +92,9 @@ function dominance(_data::AbstractDataFrame,
         fm = get_formula(dep, vcat(vars, covars))
 
         if link == nothing
-            fs[i, :r2m] = r2(lm(fm, df))
+            fs[i, :r2m] = r2(lm(fm, df, kwargs...))
         else
-            fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
+            fs[i, :r2m] = r2(glm(fm, df, family(), link(), kwargs...), fitstat)
         end
     end
 
