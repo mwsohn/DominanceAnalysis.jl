@@ -76,7 +76,7 @@ function dominance(_data::AbstractDataFrame,
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
-        if nreg >= 100 && verbose 
+        if verbose && nreg >= 100 
             if mod(i,10) == 0
                 print(".")
             end
