@@ -12,7 +12,7 @@ struct Domin
     covars::Vector{Symbol}
     fit_overall::Float64
     fitstat::AbstractDataFrame
-    domstat::Array # cominance statistics
+    domstat::Array # dominance statistics
     comstat::Array # Complete Dominance
     constat::Array # conditional dominance
 end
@@ -26,6 +26,26 @@ canonical = Dict(
     IdentityLink => Normal
 )
 
+"""
+    dominance(df::AbstractDataFrame, dep::Symbol, indeps::Vector; 
+        covars = [], fitstat = :McFadden, link = nothing, family = nothing, verbose = true,
+        kwargs...)
+
+Performs dominance analysis. 
+
+## Options:
+
+    - df - input DataFrame
+    - dep - dependent variable (Symbol only)
+    - indeps - a vector of Symbols or tuple of Symbols. Tuples are used to create sets of variables
+    - covars - covariates to be included in all models. These variables are not used in dominance analysis
+    - fitstat - R2 variant to be used for GLM models. Currently, :McFadden (default) and :Nagelkerke are available
+    - link - link function for GLM models
+    - family - distribution family to go with the `link` function (Default: family associated with the canonical link)
+    - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
+    - kwargs - other keyword arguments for GLM models
+    
+"""
 function dominance(_data::AbstractDataFrame,
     dep::Symbol, # dependent variable name
     indeps::Vector; # independent variables in a vector, sets are allowed in tuples
