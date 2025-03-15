@@ -102,7 +102,6 @@ function dominance(_data::AbstractDataFrame,
         addprocs(procs)
     end
 
-    linenum = 1
     @distributed for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
@@ -111,8 +110,7 @@ function dominance(_data::AbstractDataFrame,
                 print(".")
             end
             if mod(i,1600) == 0
-                println(" ",@sprintf("%3d",linenum))
-                linenum += 1
+                println(" ",@sprintf("%5d",i))
             end
         end
 
