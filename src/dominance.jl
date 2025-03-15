@@ -62,7 +62,7 @@ function dominance(_data::AbstractDataFrame,
     w = workers()
 
     @everywhere import Pkg
-    @everywhere Pkg.activate .
+    @everywhere Pkg.activate(".")
     @everywhere using GLM, Dominance
 
     # prepare the data set
