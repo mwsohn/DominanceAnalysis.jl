@@ -97,7 +97,7 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
-    Threads.@threads for (i, vindex) in enumerate(vvec)
+    for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
         if verbose && nreg >= 100 
