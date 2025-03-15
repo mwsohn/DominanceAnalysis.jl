@@ -143,12 +143,12 @@ function dominance(_data::AbstractDataFrame,
                 # fm = get_formula(dep, vcat(vars, covars))
 
                 if link == nothing
-                    fs[k, :r2m] = @spawnat w[j] r2(lm(get_formula(dep, vcat(vars, covars)), df))
+                    fs[k, :r2m] = fetch(@spawnat w[j] r2(lm(get_formula(dep, vcat(vars, covars)), df)))
                 else
                     if wts == nothing
-                        fs[k, :r2m] = @spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link()), fitstat)
+                        fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link()), fitstat))
                     else
-                        fs[k, :r2m] = @spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link(), wts = wts), fitstat)
+                        fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link(), wts = wts), fitstat))
                     end
                 end
                 i += 1
