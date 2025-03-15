@@ -1,6 +1,6 @@
 module Dominance
 
-using Combinatorics, Stella, DataFrames, GLM, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables
+using Combinatorics, Stella, DataFrames, GLM, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Distributed
 
 export Domin, dominance
 
