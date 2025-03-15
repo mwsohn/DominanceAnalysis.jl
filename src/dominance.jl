@@ -55,7 +55,7 @@ function dominance(_data::AbstractDataFrame,
     family=nothing,
     verbose=true,
     wts=nothing,
-    procs = 4)
+    processes = 4)
 
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
@@ -98,8 +98,8 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
-    if nprocs() > procs
-        addprocs(procs)
+    if Distributed.nprocs() > processes
+        Distributed.addprocs(processes)
     end
 
     @distributed for (i, vindex) in enumerate(vvec)
