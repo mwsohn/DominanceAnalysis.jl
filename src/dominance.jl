@@ -90,7 +90,11 @@ function dominance(_data::AbstractDataFrame,
     if link == nothing
         fitnull = r2(lm(fm, df))
     else
-        fitnull = r2(glm(fm, df, family(), link(), wts == nothing ? wts = wts), fitstat)
+        if wts == nothing
+            fitnull = r2(glm(fm, df, family(), link()), fitstat)
+        else
+            fitnull = r2(glm(fm, df, family(), link(), wts=wts), fitstat)
+        end
     end
 
     for (i, vindex) in enumerate(vvec)
@@ -114,7 +118,11 @@ function dominance(_data::AbstractDataFrame,
         if link == nothing
             fs[i, :r2m] = r2(lm(fm, df))
         else
-            fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts == nothing ? wts = wts), fitstat)
+            if wts == nothing
+                fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
+            else
+                fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts = wts), fitstat)
+            end
         end
     end
 
