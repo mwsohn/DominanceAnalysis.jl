@@ -1,6 +1,6 @@
 module Dominance
 
-using Combinatorics, Stella, DataFrames, GLM, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables
+using Combinatorics, Stella, DataFrames, GLM, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Distributed
 
 export Domin, dominance
 
@@ -54,7 +54,8 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     verbose=true,
-    wts=nothing)
+    wts=nothing,
+    procs = 4)
 
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
@@ -97,14 +98,18 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
-    for (i, vindex) in enumerate(vvec)
+    if nprocs() > procs
+        addprocs(procs)
+    end
+
+    @distributed for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
         if verbose && nreg >= 100 
-            if mod(i,10) == 0
+            if mod(i,20) == 0
                 print(".")
             end
-            if mod(i,800) == 0
+            if mod(i,1600) == 0
                 print("\n")
             end
         end
