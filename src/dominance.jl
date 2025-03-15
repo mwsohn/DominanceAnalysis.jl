@@ -129,6 +129,8 @@ function dominance(_data::AbstractDataFrame,
     addprocs(processes)
     w = workers()
 
+    @everywhere import GLM, Dominance
+
     i = 1
     while i <= nreg
 
