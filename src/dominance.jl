@@ -4,6 +4,7 @@ using Combinatorics, Stella, DataFrames, StatsModels, StatsBase, StatsAPI, Print
 
 addprocs(4)
 @everywhere using GLM
+w = workers()
 
 export Domin, dominance
 
