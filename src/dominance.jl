@@ -275,28 +275,58 @@ function Base.show(io::IO, dom::Domin)
 
     # output complete dominance
     println(io, "\nComplete dominance:")
-    pretty_table(io,
-        dom.comstat,
-        header=indepnames,
-        row_labels=indepnames,
-        row_label_column_title="dominates?",
-        hlines=[0, 1, nvars + 1],
-        vlines=[1]
-    )
+    ntables = ceil(Int8, nvars / 7)
+    if ntables > 1
+        for i in 1:ntables
+            fr = 1 + 7*(i-1)
+            to = min(nvars,7*i)
+            pretty_table(io,
+                dom.comstat[:, fr:to],
+                header=indepnames[fr:to],
+                row_labels=indepnames,
+                row_label_column_title="dominates?",
+                hlines=[0, 1, nvars + 1],
+                vlines=[1]
+            )
+        end
+    else
+        pretty_table(io,
+            dom.comstat,
+            header=indepnames,
+            row_labels=indepnames,
+            row_label_column_title="dominates?",
+            hlines=[0, 1, nvars + 1],
+            vlines=[1]
+        )
+    end
 
     # conditional dominance
     println(io, "\nConditional dominance:")
-    pretty_table(io,
-        dom.constat,
-        header=collect(1:nvars),
-        row_labels=indepnames,
-        row_label_column_title="Variables",
-        formatters=ft_printf("%6.4f", 1:nvars),
-        hlines=[0, 1, nvars + 1],
-        vlines=[1]
-    )
-    print(io, "\n")
+    if ntables > 1
+        fr = 1 + 7 * (i - 1)
+        to = min(nvars, 7 * i)
+        pretty_table(io,
+            dom.constat[:,fr:to],
+            header=collect(fr:to),
+            row_labels=indepnames,
+            row_label_column_title="Variables",
+            formatters=ft_printf("%6.4f", 1:nvars),
+            hlines=[0, 1, nvars + 1],
+            vlines=[1]
+        )
+    else
+        pretty_table(io,
+            dom.constat,
+            header=collect(1:nvars),
+            row_labels=indepnames,
+            row_label_column_title="Variables",
+            formatters=ft_printf("%6.4f", 1:nvars),
+            hlines=[0, 1, nvars + 1],
+            vlines=[1]
+        )
+    end
 
+    print(io, "\n")
 
 end
 
