@@ -303,17 +303,19 @@ function Base.show(io::IO, dom::Domin)
     # conditional dominance
     println(io, "\nConditional dominance:")
     if ntables > 1
-        fr = 1 + 7 * (i - 1)
-        to = min(nvars, 7 * i)
-        pretty_table(io,
-            dom.constat[:,fr:to],
-            header=collect(fr:to),
-            row_labels=indepnames,
-            row_label_column_title="Variables",
-            formatters=ft_printf("%6.4f", 1:nvars),
-            hlines=[0, 1, nvars + 1],
-            vlines=[1]
-        )
+        for i in 1:ntables
+            fr = 1 + 7 * (i - 1)
+            to = min(nvars, 7 * i)
+            pretty_table(io,
+                dom.constat[:,fr:to],
+                header=collect(fr:to),
+                row_labels=indepnames,
+                row_label_column_title="Variables",
+                formatters=ft_printf("%6.4f", 1:nvars),
+                hlines=[0, 1, nvars + 1],
+                vlines=[1]
+            )
+        end
     else
         pretty_table(io,
             dom.constat,
