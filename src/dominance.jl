@@ -1,6 +1,9 @@
 module Dominance
 
-using Combinatorics, Stella, DataFrames, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Distributed, GLM
+using Combinatorics, Stella, DataFrames, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Distributed
+
+addprocs(4)
+@everywhere using GLM
 
 export Domin, dominance
 
@@ -54,8 +57,7 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     verbose=true,
-    wts=nothing,
-    processes=4)
+    wts=nothing)
 
     # # turn on multiprocessing
     # addprocs(processes)
@@ -106,69 +108,69 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
-    for (i, vindex) in enumerate(vvec)
-        vars = indeps[vindex]
+    # for (i, vindex) in enumerate(vvec)
+    #     vars = indeps[vindex]
 
-        if verbose && nreg >= 100 
-            if mod(i,20) == 0
-                print(".")
-            end
-            if mod(i,1600) == 0
-                println(" ",@sprintf("%5d",i))
-            end
-        end
+    #     if verbose && nreg >= 100 
+    #         if mod(i,20) == 0
+    #             print(".")
+    #         end
+    #         if mod(i,1600) == 0
+    #             println(" ",@sprintf("%5d",i))
+    #         end
+    #     end
 
-        fs[i, :terms] = vars
-        fs[i, :terms_sorted] = sort(untuple(vars))
-        fs[i, :nterms] = length(vars)
+    #     fs[i, :terms] = vars
+    #     fs[i, :terms_sorted] = sort(untuple(vars))
+    #     fs[i, :nterms] = length(vars)
 
-        fm = get_formula(dep, vcat(vars, covars))
+    #     fm = get_formula(dep, vcat(vars, covars))
 
-        if link == nothing
-            fs[i, :r2m] = r2(lm(fm, df))
-        else
-            if wts == nothing
-                fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
-            else
-                fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts = wts), fitstat)
-            end
-        end
-    end
-
-    # i = 1
-    # while i <= nreg
-
-    #     for j in 1:length(w)
-    #         k = i + j - 1
-    #         if k <= nreg
-    #             vars = indeps[vvec[i]]
-    #             fs[k, :terms] = vars
-    #             fs[k, :terms_sorted] = sort(untuple(vars))
-    #             fs[k, :nterms] = length(vars)
-
-    #             # fm = get_formula(dep, vcat(vars, covars))
-
-    #             if link == nothing
-    #                 fs[k, :r2m] = fetch(@spawnat w[j] r2(lm(get_formula(dep, vcat(vars, covars)), df)))
-    #             else
-    #                 if wts == nothing
-    #                     fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link()), fitstat))
-    #                 else
-    #                     fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link(), wts = wts), fitstat))
-    #                 end
-    #             end
-    #             i += 1
-    #             if verbose && nreg >= 100 
-    #                 if mod(i,20) == 0
-    #                     print(".")
-    #                 end
-    #                 if mod(i,1600) == 0
-    #                     println(" ",@sprintf("%5d",i))
-    #                 end
-    #             end
+    #     if link == nothing
+    #         fs[i, :r2m] = r2(lm(fm, df))
+    #     else
+    #         if wts == nothing
+    #             fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
+    #         else
+    #             fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts = wts), fitstat)
     #         end
     #     end
     # end
+
+    i = 1
+    while i <= nreg
+
+        for j in 1:length(w)
+            k = i + j - 1
+            if k <= nreg
+                vars = indeps[vvec[i]]
+                fs[k, :terms] = vars
+                fs[k, :terms_sorted] = sort(untuple(vars))
+                fs[k, :nterms] = length(vars)
+
+                # fm = get_formula(dep, vcat(vars, covars))
+
+                if link == nothing
+                    fs[k, :r2m] = fetch(@spawnat w[j] r2(lm(get_formula(dep, vcat(vars, covars)), df)))
+                else
+                    if wts == nothing
+                        fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link()), fitstat))
+                    else
+                        fs[k, :r2m] = fetch(@spawnat w[j] r2(glm(get_formula(dep, vcat(vars, covars)), df, family(), link(), wts = wts), fitstat))
+                    end
+                end
+                i += 1
+                if verbose && nreg >= 100 
+                    if mod(i,20) == 0
+                        print(".")
+                    end
+                    if mod(i,1600) == 0
+                        println(" ",@sprintf("%5d",i))
+                    end
+                end
+            end
+        end
+    end
 
     # additional contribution of each indep
     for i = 1:nreg
