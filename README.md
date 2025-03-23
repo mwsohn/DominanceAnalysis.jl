@@ -1,6 +1,6 @@
 # Dominance Analysis
- A package for conducting dominance analysis. An excellent introduction by Joseph Luchman can be found 
- at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. 
+ A Julia package for conducting dominance analysis. An excellent introduction on `dominance analysis` by Joseph Luchman can be found 
+ at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.
 
   ## Installation
 
@@ -9,7 +9,7 @@
  ## Syntax
 
 ```
-    dominance(df,dep,indeps,covars,link,family)
+    dominance(df,dep,indeps; covars = [],link = nothing,family = nothing, verbose = false, multithreads = false)
 ```
 
 ### Options:
@@ -30,7 +30,8 @@
 - verbose - set it to `true` to turn on the verbose model that will display dots to be printed
     as a progress indicator
 
-All variables must be in Symbols.
+All variables must be in Symbols. A group of variables to be treated as a set can be entered as a tuple
+in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default.
 
 ## Example
 
