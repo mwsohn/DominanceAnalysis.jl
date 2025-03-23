@@ -43,7 +43,7 @@ Performs dominance analysis.
     - link - link function for GLM models
     - family - distribution family to go with the `link` function (Default: family associated with the canonical link)
     - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
-    - kwargs - other keyword arguments for GLM models
+    - multithreads - set it to `true` to turn on multithreading
     
 """
 function dominance(_data::AbstractDataFrame,
@@ -54,7 +54,7 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     verbose=true,
-    multi=false,
+    multithreads=false,
     wts=nothing)
 
     # prepare the data set
@@ -110,7 +110,7 @@ function dominance(_data::AbstractDataFrame,
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
 
-    if multi == false
+    if multithreads == false
         for i = 1:nreg
             if verbose && nreg >= 100
                 if mod(i, 20) == 0
