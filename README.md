@@ -22,8 +22,13 @@
 - link - a link function for GLM models. Valid link functions are LogitLink,
     LogLink, IdentifyLink, etc. If `family` option is not specified, `link` will
     be used to determine the type of GLM model
-- family - a distribution family. If not specified, a distribution will be chosen
+- family - a distribution family. If not specified, a distribution will be
+    automatically chosen based on the link function.
 - fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). The default is :McFadden.
+- multithreads - set it to `true` to use multithreads. 
+    This will speed up the execution by 2 times for complex models.
+- verbose - set it to `true` to turn on the verbose model that will display dots to be printed
+    as a progress indicator
 
 All variables must be in Symbols.
 
