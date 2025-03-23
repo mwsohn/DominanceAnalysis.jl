@@ -9,7 +9,7 @@
  ## Syntax
 
 ```
-    dominance(df,dep,indeps; covars = [],link = nothing,family = nothing, verbose = false, multithreads = false)
+    dominance(df,dep,indeps; covars = [],link = nothing,family = nothing, verbose = false, multithreads = false, wts=nothing)
 ```
 
 ### Options:
@@ -29,11 +29,17 @@
     This will speed up the execution by 2 times for complex models.
 - verbose - set it to `true` to turn on the verbose model that will display dots to be printed
     as a progress indicator
+- wts - specify a weight vector for a complex survey data. 
 
 All variables must be in Symbols. A group of variables to be treated as a set can be entered as a tuple
-in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default.
+in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default. Linear regression
+and logistic regression models with or without weights have been tested against the output from Stata domin
+program (https://journals.sagepub.com/doi/pdf/10.1177/1536867X211025837). 
 
 ## Example
+
+I am using `auto.dta` downloaded from http://www.stata-press.com/data/r13/auto.dta, converted to Julia DataFrame using
+`read_stata` in Stell.jl.
 
 ### 1. Linear regression
 
