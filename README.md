@@ -1,5 +1,5 @@
 # Dominance Analysis
- A Julia package for conducting dominance analysis. An excellent introduction on `dominance analysis` by Joseph Luchman can be found 
+ A Julia package for conducting dominance analysis. An excellent introduction and formulas on `dominance analysis` by Joseph Luchman can be found 
  at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.
 
   ## Installation
@@ -15,7 +15,7 @@
 ### Options:
 - df - input data in a DataFrame
 - dep - dependent variable
-- indeps - a vector of independent variables. A set of variables can be
+- indeps - a vector of independent variables. A `set` can be
     specified as a tuple within the vector
 - covars - a vector of covariates that will be included in all models.
     They will not be used as independent variables in the dominance analysis
