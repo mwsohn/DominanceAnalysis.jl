@@ -33,7 +33,7 @@
 
 ### Notes
 
-All variables must be in Symbols. A group of variables to be treated as a set can be entered as a tuple
+All variables must be in Symbols. A group of variables to be treated as a `set` should be entered as a tuple
 in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default. Linear regression
 and logistic regression models with or without weights have been tested against the output from Stata domin
 program (https://journals.sagepub.com/doi/pdf/10.1177/1536867X211025837).
