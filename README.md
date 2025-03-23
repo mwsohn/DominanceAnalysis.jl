@@ -1,6 +1,6 @@
 # Dominance Analysis
  A Julia package for conducting dominance analysis. An excellent introduction and formulas on `dominance analysis` by Joseph Luchman can be found 
- at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.[^1:6]
+ at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.[^1][^2][^3][^4][^5][^6]
 
   ## Installation
 
