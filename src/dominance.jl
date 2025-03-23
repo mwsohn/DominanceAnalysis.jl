@@ -63,7 +63,7 @@ function dominance(_data::AbstractDataFrame,
 
     # MF and MM
     MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
-    MM = ModelFrame(MF)
+    MM = ModelMatrix(MF)
     
     # link and family
     if link != nothing
@@ -125,7 +125,7 @@ function dominance(_data::AbstractDataFrame,
                     println(" ", @sprintf("%5d", i))
                 end
             end
-            fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i,:terms_sorted], fs[nreg,:terms_sorted], MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i,:terms_sorted], allvars, MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
