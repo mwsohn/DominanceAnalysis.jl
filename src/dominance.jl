@@ -121,7 +121,7 @@ function dominance(_data::AbstractDataFrame,
 
     if multi == false
         for i = 1:nreg
-            fs[i,:r2m] = get_fitstat(df,fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i,:r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
@@ -199,7 +199,7 @@ function dominance(_data::AbstractDataFrame,
     )
 end
 
-function get_fitstat(df,fm,family,link,fitstat,wts)
+function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
         return r2(lm(fm[i], df))
     end
