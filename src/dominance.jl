@@ -58,8 +58,13 @@ function dominance(_data::AbstractDataFrame,
     wts=nothing)
 
     # prepare the data set
-    df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
+    allvars = untuple(vcat(dep, indeps, covars))
+    df = dropmissing(select(_data, allvars))
 
+    # MF and MM
+    MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
+    MM = ModelFrame(MF)
+    
     # link and family
     if link != nothing
         if family == nothing
@@ -87,14 +92,14 @@ function dominance(_data::AbstractDataFrame,
     end
 
     # fit stats for null models
-    fm = get_formula(dep, covars)
+    fm1 = get_formula(dep, covars)
     if link == nothing
-        fitnull = r2(lm(fm, df))
+        fitnull = r2(lm(fm1, df))
     else
         if wts == nothing
-            fitnull = r2(glm(fm, df, family(), link()), fitstat)
+            fitnull = r2(glm(fm1, df, family(), link()), fitstat)
         else
-            fitnull = r2(glm(fm, df, family(), link(), wts=wts), fitstat)
+            fitnull = r2(glm(fm1, df, family(), link(), wts=wts), fitstat)
         end
     end
 
@@ -120,7 +125,7 @@ function dominance(_data::AbstractDataFrame,
                     println(" ", @sprintf("%5d", i))
                 end
             end
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i,:terms_sorted], fs[nreg,:terms_sorted], MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
@@ -132,7 +137,8 @@ function dominance(_data::AbstractDataFrame,
                     println(" ", @sprintf("%5d", i))
                 end
             end
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+
         end
     end
 
@@ -195,6 +201,16 @@ function dominance(_data::AbstractDataFrame,
         complete,
         conditional_dom
     )
+end
+
+function get_mm(mm, indeps, allvars, assign)
+    n = [1]
+    for v in sort(unique(indeps))
+        i = findfirst(x -> x == v, allvars)
+        n = vcat(n, findall(x -> x == i, assign))
+    end
+
+    return mm[:, n]
 end
 
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
