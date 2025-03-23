@@ -54,15 +54,8 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     verbose=true,
+    multi=false,
     wts=nothing)
-
-    # # turn on multiprocessing
-    # addprocs(processes)
-    # w = workers()
-
-    # @everywhere import Pkg
-    # @everywhere Pkg.activate(".")
-    # @everywhere using GLM, Dominance
 
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
@@ -105,6 +98,8 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
+    # formulae
+    fm = []
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
@@ -121,16 +116,25 @@ function dominance(_data::AbstractDataFrame,
         fs[i, :terms_sorted] = sort(untuple(vars))
         fs[i, :nterms] = length(vars)
 
-        fm = get_formula(dep, vcat(vars, covars))
+        push!(fm, get_formula(dep, vcat(vars, covars)))
+    end
 
-        if link == nothing
-            fs[i, :r2m] = r2(lm(fm, df))
-        else
-            if wts == nothing
-                fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
-            else
-                fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts = wts), fitstat)
-            end
+    if multi = false
+        for i = 1:nreg
+            fs[i,:r2m] = get_fitstat(df,fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+        end
+    else
+        Threads.@threads for i = 1:nreg
+            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            # if link == nothing
+            #     fs[i, :r2m] = r2(lm(fm, df))
+            # else
+            #     if wts == nothing
+            #         fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
+            #     else
+            #         fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts=wts), fitstat)
+            #     end
+            # end
         end
     end
 
@@ -193,6 +197,19 @@ function dominance(_data::AbstractDataFrame,
         complete,
         conditional_dom
     )
+end
+
+function get_fitstat(df,fm,family,link,fitstat,wts)
+    if link == nothing
+        return r2(lm(fm[i], df))
+    end
+    if family == nothing && link != nothing
+        family = canonical[link]
+    end
+    if wts == nothing
+        return r2(glm(fm, df, family(), link()), fitstat)
+    end
+    return r2(glm(fm, df, family(), link(), wts = wts), fitstat)
 end
 
 function Base.show(io::IO, dom::Domin)
