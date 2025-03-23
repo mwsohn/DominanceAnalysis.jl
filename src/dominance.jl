@@ -58,12 +58,7 @@ function dominance(_data::AbstractDataFrame,
     wts=nothing)
 
     # prepare the data set
-    # allvars = untuple(vcat(dep, indeps, covars))
     df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
-
-    # MF and MM
-    # MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
-    # MM = ModelMatrix(MF)
     
     # link and family
     if link != nothing
@@ -126,7 +121,6 @@ function dominance(_data::AbstractDataFrame,
                 end
             end
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            # fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i, :terms_sorted], allvars, MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
@@ -202,16 +196,6 @@ function dominance(_data::AbstractDataFrame,
         conditional_dom
     )
 end
-
-# function get_mm(mm, indeps, allvars, assign)
-#     n = [1]
-#     for v in sort(unique(indeps))
-#         i = findfirst(x -> x == v, allvars)
-#         n = vcat(n, findall(x -> x == i, assign))
-#     end
-
-#     return mm[:, n]
-# end
 
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
