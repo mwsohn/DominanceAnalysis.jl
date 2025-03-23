@@ -353,11 +353,7 @@ other predictor. Finally, one predictor generally dominates another
 if its average conditional contribution over all model sizes is
 greater than that of the other predictor.
 
+Luchman's intro and formulas at 
 https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html
-
-linear regression - R²
-logistic regression - Pseudo R² (McFadden, Nagelkerke, Estrella, Cox-Snell all produce the same dominance relationship)
-
-Joseph Luchman's Introduction to Dominance Analysis on CRAN at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html
 """
 
