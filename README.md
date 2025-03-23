@@ -39,7 +39,7 @@ program (https://journals.sagepub.com/doi/pdf/10.1177/1536867X211025837).
 ## Example
 
 I am using `auto.dta` downloaded from http://www.stata-press.com/data/r13/auto.dta, converted to Julia DataFrame using
-`read_stata` in Stell.jl.
+`read_stata` in Stella.jl.
 
 ### 1. Linear regression
 
