@@ -137,6 +137,7 @@ function dominance(_data::AbstractDataFrame,
                     println(" ", @sprintf("%5d", i))
                 end
             end
+            fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i, :terms_sorted], allvars, MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
             # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
 
         end
