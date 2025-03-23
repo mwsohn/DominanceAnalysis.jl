@@ -1,6 +1,6 @@
 # Dominance Analysis
  A Julia package for conducting dominance analysis. An excellent introduction and formulas on `dominance analysis` by Joseph Luchman can be found 
- at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.[^1][^2][^3][^4][^5][^6]
+ at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.[^1; ^2][^3][^4][^5][^6]
 
   ## Installation
 
@@ -12,7 +12,7 @@
     dominance(df,dep,indeps; covars = [],link = nothing,family = nothing, verbose = false, multithreads = false, wts=nothing)
 ```
 
-### Options
+### - Options
 - df - input data in a DataFrame
 - dep - dependent variable
 - indeps - a vector of independent variables. A `set` can be
@@ -31,7 +31,7 @@
     as a progress indicator
 - wts - specify a weight vector for complex survey data. 
 
-### Notes
+### - Notes
 
 All variables must be in Symbols. A group of variables to be treated as a `set` should be entered as a tuple
 in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default. Linear regression
@@ -199,6 +199,9 @@ Conditional dominance:
 
 [^6]: Grömping, Ulrike. 2007. “Estimators of Relative Importance in Linear Regression Based on Variance Decomposition.” The American Statistician 61 (2): 139–47. https://doi.org/10.1198/000313007X188252.
 
-[^7]: Luchman, Joseph Nicholas. 2015. “Determining Subgroup Difference Importance with Complex Survey Designs: An Application of Weighted Dominance Analysis.” Survey Practice 8 (5). https:/​/​doi.org/​10.29115/​SP-2015-0022. 
+[^7]: Luchman, Joseph Nicholas. 2015. “Determining Subgroup Difference Importance with Complex Survey Designs: An Application of Weighted Dominance Analysis.” Survey Practice 8 (5). https:/​/​doi.org/​10.29115/​SP-2015-0022.
+
+
+
 
 
