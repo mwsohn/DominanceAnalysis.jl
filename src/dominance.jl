@@ -137,8 +137,8 @@ function dominance(_data::AbstractDataFrame,
                     println(" ", @sprintf("%5d", i))
                 end
             end
-            fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i, :terms_sorted], allvars, MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
-            # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            # fs[i, :r2m] = get_fitstat(get_mm(MM.m, fs[i, :terms_sorted], allvars, MM.assign), response(MF), family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
 
         end
     end
@@ -214,14 +214,14 @@ function get_mm(mm, indeps, allvars, assign)
     return mm[:, n]
 end
 
-function get_fitstat(X,y; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
+function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
-        return r2(lm(X, y))
+        return r2(lm(fm,df))
     end
     if wts == nothing
-        return r2(glm(X, y, family(), link()), fitstat)
+        return r2(glm(fm, df, family(), link()), fitstat)
     end
-    return r2(glm(X, y, family(), link(), wts = wts), fitstat)
+    return r2(glm(fm, df, family(), link(), wts = wts), fitstat)
 end
 
 function Base.show(io::IO, dom::Domin)
