@@ -59,7 +59,7 @@ function dominance(_data::AbstractDataFrame,
 
     # prepare the data set
     # allvars = untuple(vcat(dep, indeps, covars))
-    df = dropmissing(select(_data, allvars))
+    df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
 
     # MF and MM
     # MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
@@ -203,15 +203,15 @@ function dominance(_data::AbstractDataFrame,
     )
 end
 
-function get_mm(mm, indeps, allvars, assign)
-    n = [1]
-    for v in sort(unique(indeps))
-        i = findfirst(x -> x == v, allvars)
-        n = vcat(n, findall(x -> x == i, assign))
-    end
+# function get_mm(mm, indeps, allvars, assign)
+#     n = [1]
+#     for v in sort(unique(indeps))
+#         i = findfirst(x -> x == v, allvars)
+#         n = vcat(n, findall(x -> x == i, assign))
+#     end
 
-    return mm[:, n]
-end
+#     return mm[:, n]
+# end
 
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
