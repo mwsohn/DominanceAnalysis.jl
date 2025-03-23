@@ -60,6 +60,10 @@ function dominance(_data::AbstractDataFrame,
     # prepare the data set
     df = dropmissing(select(_data, vcat(dep, untuple(indeps), covars)))
 
+    if multi
+        df = SharedArray(Matrix(df))
+    end
+
     # link and family
     if link != nothing
         if family == nothing
