@@ -119,7 +119,7 @@ function dominance(_data::AbstractDataFrame,
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
 
-    if multi = false
+    if multi == false
         for i = 1:nreg
             fs[i,:r2m] = get_fitstat(df,fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
