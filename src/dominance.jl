@@ -74,7 +74,7 @@ function dominance(_data::AbstractDataFrame,
     nvars = length(indeps)
     vvec = collect(combinations(collect(1:nvars)))
     nreg = length(vvec)
-    println("A total of ", nreg, " regressions will be estimated.\n")
+    println("\nA total of ", nreg, " regressions will be estimated.\n")
 
     # df for saving fitstats
     fs = DataFrame()
@@ -103,15 +103,6 @@ function dominance(_data::AbstractDataFrame,
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
 
-        if verbose && nreg >= 100 
-            if mod(i,20) == 0
-                print(".")
-            end
-            if mod(i,1600) == 0
-                println(" ",@sprintf("%5d",i))
-            end
-        end
-
         fs[i, :terms] = vars
         fs[i, :terms_sorted] = sort(untuple(vars))
         fs[i, :nterms] = length(vars)
@@ -121,20 +112,27 @@ function dominance(_data::AbstractDataFrame,
 
     if multi == false
         for i = 1:nreg
-            fs[i,:r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            if verbose && nreg >= 100
+                if mod(i, 20) == 0
+                    print(".")
+                end
+                if mod(i, 1600) == 0
+                    println(" ", @sprintf("%5d", i))
+                end
+            end
+            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
+            if verbose && nreg >= 100
+                if mod(i, 20) == 0
+                    print(".")
+                end
+                if mod(i, 1600) == 0
+                    println(" ", @sprintf("%5d", i))
+                end
+            end
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            # if link == nothing
-            #     fs[i, :r2m] = r2(lm(fm, df))
-            # else
-            #     if wts == nothing
-            #         fs[i, :r2m] = r2(glm(fm, df, family(), link()), fitstat)
-            #     else
-            #         fs[i, :r2m] = r2(glm(fm, df, family(), link(), wts=wts), fitstat)
-            #     end
-            # end
         end
     end
 
@@ -202,9 +200,6 @@ end
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
         return r2(lm(fm[i], df))
-    end
-    if family == nothing && link != nothing
-        family = canonical[link]
     end
     if wts == nothing
         return r2(glm(fm, df, family(), link()), fitstat)
