@@ -29,7 +29,7 @@ canonical = Dict(
 """
     dominance(df::AbstractDataFrame, dep::Symbol, indeps::Vector; 
         covars = [], fitstat = :McFadden, link = nothing, family = nothing, verbose = true,
-        kwargs...)
+        multithreads = true, wts = nothing)
 
 Performs dominance analysis. 
 
@@ -43,7 +43,7 @@ Performs dominance analysis.
     - link - link function for GLM models
     - family - distribution family to go with the `link` function (Default: family associated with the canonical link)
     - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
-    - multithreads - set it to `true` to turn on multithreading
+    - multithreads - set it to `false` to turn off multithreading
     
 """
 function dominance(_data::AbstractDataFrame,
@@ -133,8 +133,9 @@ function dominance(_data::AbstractDataFrame,
 
     # complete dominance
     complete = zeros(Int8, nvars, nvars)
+    vvec = untuple.(dom.fitstat.terms)
     for (i,j) in permutations(1:nvars,2)
-        tmpfs = dropmissing(fs[:, [Symbol(i), Symbol(j)]])
+        tmpfs = dropmissing(fs[findall(x -> !in(v1,x) && !in(v2, x), vvec), [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
         compared = (fs1 .- fs2)
