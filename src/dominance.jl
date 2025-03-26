@@ -54,7 +54,7 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     verbose=true,
-    multithreads=false,
+    multithreads=true,
     wts=nothing)
 
     # prepare the data set
@@ -108,17 +108,21 @@ function dominance(_data::AbstractDataFrame,
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
 
-    if multithreads == false
-        for i = 1:nreg
-            verbose && show_progress(i,nreg)
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-        end
-    else
-        Threads.@threads for i = 1:nreg
-            verbose && show_progress(i, nreg)
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-        end
+    Threads.@threads for i = 1:nreg
+        verbose && show_progress(i, nreg)
+        fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
     end
+    # if multithreads == false
+    #     for i = 1:nreg
+    #         verbose && show_progress(i,nreg)
+    #         fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+    #     end
+    # else
+    #     Threads.@threads for i = 1:nreg
+    #         verbose && show_progress(i, nreg)
+    #         fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+    #     end
+    # end
 
     # additional contribution of each indep
     for i = 1:nreg
@@ -133,7 +137,7 @@ function dominance(_data::AbstractDataFrame,
 
     # complete dominance
     complete = zeros(Int8, nvars, nvars)
-    for (i,j) in combinations(1:nvars,2)
+    for (i,j) in permutations(1:nvars,2)
         tmpfs = dropmissing(fs[:, [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
