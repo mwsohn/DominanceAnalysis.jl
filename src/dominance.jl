@@ -133,9 +133,8 @@ function dominance(_data::AbstractDataFrame,
 
     # complete dominance
     complete = zeros(Int8, nvars, nvars)
-    vvec = untuple.(dom.fitstat.terms)
     for (i,j) in permutations(1:nvars,2)
-        tmpfs = dropmissing(fs[findall(x -> !in(v1,x) && !in(v2, x), vvec), [Symbol(i), Symbol(j)]])
+        tmpfs = dropmissing(fs[findall(x -> !in(v1,x) && !in(v2, x), fs.terms_sorted), [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
         compared = (fs1 .- fs2)
