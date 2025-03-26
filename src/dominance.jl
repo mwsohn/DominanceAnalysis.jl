@@ -208,15 +208,24 @@ function vidx(indeps, allvars, assign)
     return n
 end
 
-function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
+function get_fitstat(X,y; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
-        return r2(lm(fm,df))
+        return r2(lm(X,y))
     end
     if wts == nothing
-        return r2(glm(fm, df, family(), link()), fitstat)
+        return r2(glm(X,y, family(), link()), fitstat)
     end
-    return r2(glm(fm, df, family(), link(), wts = wts), fitstat)
+    return r2(glm(X,y, family(), link(), wts = wts), fitstat)
 end
+# function get_fitstat(df, fm; family=nothing, link=nothing, fitstat=nothing, wts=nothing)
+#     if link == nothing
+#         return r2(lm(fm, df))
+#     end
+#     if wts == nothing
+#         return r2(glm(fm, df, family(), link()), fitstat)
+#     end
+#     return r2(glm(fm, df, family(), link(), wts=wts), fitstat)
+# end
 
 function Base.show(io::IO, dom::Domin)
 
