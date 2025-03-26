@@ -2,7 +2,7 @@ module Dominance
 
 using Combinatorics, Stella, DataFrames, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Distributed, GLM
 
-export Domin, dominance
+export Domin, dominance, dominance_designations
 
 struct Domin
     nobs::Int64
@@ -12,7 +12,7 @@ struct Domin
     covars::Vector{Symbol}
     fit_overall::Float64
     fitstat::AbstractDataFrame
-    domstat::Array # dominance statistics
+    domstat::Array # General dominance statistics
     comstat::Array # Complete Dominance
     constat::Array # conditional dominance
 end
@@ -102,36 +102,20 @@ function dominance(_data::AbstractDataFrame,
     fm = []
     for (i, vindex) in enumerate(vvec)
         vars = indeps[vindex]
-
         fs[i, :terms] = vars
         fs[i, :terms_sorted] = sort(untuple(vars))
         fs[i, :nterms] = length(vars)
-
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
 
     if multithreads == false
         for i = 1:nreg
-            if verbose && nreg >= 100
-                if mod(i, 20) == 0
-                    print(".")
-                end
-                if mod(i, 1600) == 0
-                    println(" ", @sprintf("%5d", i))
-                end
-            end
+            verbose && show_progress(i,nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
-            if verbose && nreg >= 100
-                if mod(i, 20) == 0
-                    print(".")
-                end
-                if mod(i, 1600) == 0
-                    println(" ", @sprintf("%5d", i))
-                end
-            end
+            verbose && show_progress(i, nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
@@ -149,19 +133,17 @@ function dominance(_data::AbstractDataFrame,
 
     # complete dominance
     complete = zeros(Int8, nvars, nvars)
-    for i = 1:nvars
-        for j = (i+1):nvars
-            tmpfs = dropmissing(fs[:, [Symbol(i), Symbol(j)]])
-            fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
-            fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
-            compared = (fs1 .- fs2)
-            if Base.all(compared .> 0.0)
-                complete[i, j] = 1
-                complete[j, i] = -1
-            elseif Base.all(compared .< 0.0)
-                complete[i, j] = -1
-                complete[j, i] = 1
-            end
+    for (i,j) in combinations(1:nvars,2)
+        tmpfs = dropmissing(fs[:, [Symbol(i), Symbol(j)]])
+        fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
+        fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
+        compared = (fs1 .- fs2)
+        if Base.all(compared .> 0.0)
+            complete[i, j] = 1
+            # complete[j, i] = -1
+        elseif Base.all(compared .< 0.0)
+            complete[i, j] = -1
+            # complete[j, i] = 1
         end
     end
 
@@ -195,6 +177,17 @@ function dominance(_data::AbstractDataFrame,
         complete,
         conditional_dom
     )
+end
+
+function show_progress(i, nreg)
+    if nreg >= 100
+        if mod(i, 20) == 0
+            print(".")
+        end
+        if mod(i, 1600) == 0
+            println(" ", @sprintf("%5d", i))
+        end
+    end
 end
 
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
@@ -336,6 +329,53 @@ function get_formula(dep, indeps)
     end
     return Term(dep) ~ sum(term.(untuple(indeps)))
 end
+
+"""
+    dominance_designations(d::Domin)
+
+Prints strongest dominance designations based on the dominance analysis provided as input.
+"""
+function dominance_designations(dom)
+    vars = Dominance.untuple(dom.indeps)
+    nvars = length(vars)
+
+    # compute dominance
+    davg = mean(dom.constat, dims=2)
+    ddesig = zeros(Int8, nvars, nvars)
+    for (i, j) in permutations(1:nvars, 2)
+        if dom.comstat[i, j] == 1
+            ddesig[i, j] = 1 # complete dominance
+        elseif sum(dom.constat[i, :] .> dom.constat[j, :]) == nvars
+            ddesig[i, j] = 2 # conditional dominance
+        elseif davg[i] > davg[j]
+            ddesig[i, j] = 3 # general dominance
+        end
+    end
+
+    # sort by value in reverse order
+    # dd = sort(dd,byvalue=true,rev=true)
+    println("Strongest dominance desginations:\n")
+    # complete dominance
+    for (i, j) in permutations(1:nvars, 2)
+        if ddesig[i, j] == 1
+            println(vars[i], " completely dominates ", vars[j])
+        end
+    end
+    # conditional dominance
+    for (i, j) in permutations(1:nvars, 2)
+        if ddesig[i, j] == 2
+            println(vars[i], " conditionally dominates ", vars[j])
+        end
+    end
+    # general dominance
+    for (i, j) in permutations(1:nvars, 2)
+        if ddesig[i, j] == 3
+            println(vars[i], " generally dominates ", vars[j])
+        end
+    end
+end
+
+
 
 end
 
