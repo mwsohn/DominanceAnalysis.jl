@@ -121,13 +121,13 @@ function dominance(_data::AbstractDataFrame,
         for i = 1:nreg
             verbose && show_progress(i,nreg)
             # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            fs[i, :r2m] = get_fitstat(mm[:, vidx(covars, allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(vcat(fs[i,:terms_sorted],covars), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
             verbose && show_progress(i, nreg)
             # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            fs[i, :r2m] = get_fitstat(mm[:, vidx(covars, allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(vcat(fs[i, :terms_sorted], covars), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
 
@@ -208,7 +208,7 @@ function vidx(indeps, allvars, assign)
     return n
 end
 
-function get_fitstat(X,y; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
+function get_fitstat(X, y; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
     if link == nothing
         return r2(lm(X,y))
     end
