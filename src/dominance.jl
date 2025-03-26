@@ -58,8 +58,16 @@ function dominance(_data::AbstractDataFrame,
     wts=nothing)
 
     # prepare the data set
-    df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
-    
+
+    # MF, MM, and y
+    allvars = untuple(vcat(indeps, covars))
+    df = dropmissing(select(_data, allvars))
+    MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
+    MM = ModelMatrix(MF)
+    y = convert(Vector{Float64},response(MF))
+    assign = MM.assign
+    mm = MM.m
+     
     # link and family
     if link != nothing
         if family == nothing
@@ -92,9 +100,10 @@ function dominance(_data::AbstractDataFrame,
         fitnull = r2(lm(fm1, df))
     else
         if wts == nothing
-            fitnull = r2(glm(fm1, df, family(), link()), fitstat)
+            # fitnull = r2(glm(fm1, df, family(), link()), fitstat)
+            fitnull = r2(glm(mm[:,vidx(covars,allvars,assign)], y, family(), link()), fitstat)
         else
-            fitnull = r2(glm(fm1, df, family(), link(), wts=wts), fitstat)
+            fitnull = r2(glm(mm[:, vidx(covars, allvars, assign)], y, family(), link(), wts=wts), fitstat)
         end
     end
 
@@ -111,12 +120,14 @@ function dominance(_data::AbstractDataFrame,
     if multithreads == false
         for i = 1:nreg
             verbose && show_progress(i,nreg)
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(covars, allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
             verbose && show_progress(i, nreg)
-            fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(covars, allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
 
@@ -138,7 +149,7 @@ function dominance(_data::AbstractDataFrame,
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
         compared = (fs1 .- fs2)
-        if Base.all(compared .>= 0.0)
+        if Base.all(compared .> 0.0)
             complete[i, j] = 1
         elseif Base.all(compared .< 0.0)
             complete[i, j] = -1
@@ -186,6 +197,15 @@ function show_progress(i, nreg)
             println(" ", @sprintf("%5d", i))
         end
     end
+end
+
+function vidx(indeps, allvars, assign)
+    n = [1]
+    for v in indeps
+         i = findfirst(x -> x == v, allvars)
+         push!(n,findall(x -> x == i, assign))
+    end
+    return n
 end
 
 function get_fitstat(df,fm; family = nothing, link = nothing, fitstat = nothing, wts = nothing)
