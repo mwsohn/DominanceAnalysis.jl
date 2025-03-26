@@ -101,7 +101,7 @@ function dominance(_data::AbstractDataFrame,
     else
         if wts == nothing
             # fitnull = r2(glm(fm1, df, family(), link()), fitstat)
-            fitnull = r2(glm(mm[:,vidx(covars,allvars,assign)], y, family(), link()), fitstat)
+            fitnull = r2(glm(mm[:, vidx(covars,allvars,assign)], y, family(), link()), fitstat)
         else
             fitnull = r2(glm(mm[:, vidx(covars, allvars, assign)], y, family(), link(), wts=wts), fitstat)
         end
@@ -121,13 +121,13 @@ function dominance(_data::AbstractDataFrame,
         for i = 1:nreg
             verbose && show_progress(i,nreg)
             # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            fs[i, :r2m] = get_fitstat(mm[:, vidx(vcat(fs[i,:terms_sorted],covars), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(untuple(vcat(fs[i,:terms],covars)), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
             verbose && show_progress(i, nreg)
             # fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
-            fs[i, :r2m] = get_fitstat(mm[:, vidx(vcat(fs[i, :terms_sorted], covars), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
+            fs[i, :r2m] = get_fitstat(mm[:, vidx(untuple(vcat(fs[i, :terms], covars)), allvars, assign)], y, family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
 
@@ -203,7 +203,7 @@ function vidx(indeps, allvars, assign)
     n = [1]
     for v in indeps
          i = findfirst(x -> x == v, allvars)
-         push!(n,findall(x -> x == i, assign))
+         n = vcat(n, findall(x -> x == i, assign))
     end
     return n
 end
