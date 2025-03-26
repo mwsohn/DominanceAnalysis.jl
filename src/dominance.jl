@@ -61,7 +61,7 @@ function dominance(_data::AbstractDataFrame,
 
     # MF, MM, and y
     allvars = untuple(vcat(indeps, covars))
-    df = dropmissing(select(_data, allvars))
+    df = dropmissing(select(_data, vcat(dep,allvars)))
     MF = ModelFrame(term(dep) ~ sum(term.(allvars)), df)
     MM = ModelMatrix(MF)
     y = convert(Vector{Float64},response(MF))
