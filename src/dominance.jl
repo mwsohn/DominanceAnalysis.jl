@@ -58,7 +58,7 @@ function dominance(_data::AbstractDataFrame,
     wts=nothing)
 
     # prepare the data set
-    df = dropmissing(select(_data, allvars))
+    df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
      
     # link and family
     if link != nothing
