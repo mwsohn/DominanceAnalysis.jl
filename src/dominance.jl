@@ -17,15 +17,6 @@ struct Domin
     constat::Array # conditional dominance
 end
 
-canonical = Dict(
-    LogitLink => Bernoulli,
-    InverseLink => Gamma,
-    LogLink => Poisson,
-    InverseSquareLink => InverseGaussian,
-    NegativeBinomialLink => NegativeBinomial,
-    IdentityLink => Normal
-)
-
 """
     dominance(df::AbstractDataFrame, dep::Symbol, indeps::Vector; 
         covars = [], fitstat = :McFadden, link = nothing, family = nothing, verbose = true,
@@ -40,8 +31,8 @@ Performs dominance analysis.
     - indeps - a vector of Symbols or tuple of Symbols. Tuples are used to create sets of variables
     - covars - covariates to be included in all models. These variables are not used in dominance analysis
     - fitstat - R2 variant to be used for GLM models. Currently, :McFadden (default) and :Nagelkerke are available
-    - link - link function for GLM models
-    - family - distribution family to go with the `link` function (Default: family associated with the canonical link)
+    - link - link function for GLM models. If it is not set, a canonical link function will be chosen.
+    - family - required for GLM models.
     - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
     - multithreads - set it to `false` to turn off multithreading
     
@@ -62,9 +53,7 @@ function dominance(_data::AbstractDataFrame,
      
     # link and family
     if link != nothing
-        if family == nothing
-            family = canonical[link]
-        end
+        link = canonical[family]
         if !in(fitstat, [:McFadden, :Nagelkerke])
             throw(ArgumentError(fitstat, " is not allowed"))
         end
@@ -142,10 +131,8 @@ function dominance(_data::AbstractDataFrame,
         compared = (fs1 .- fs2)
         if all(compared .> 0.0)
             complete[i, j] = 1
-            complete[j, i] = -1
         elseif all(compared .< 0.0)
             complete[i, j] = -1
-            complete[j, i] = 1
         end
     end
 
