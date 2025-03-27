@@ -133,16 +133,18 @@ function dominance(_data::AbstractDataFrame,
 
     # complete dominance
     complete = zeros(Int8, nvars, nvars)
-    for (i,j) in permutations(1:nvars,2)
+    for (i,j) in combinations(1:nvars,2)
+        # find the rows whose rhs terms do not include indeps[i] and indeps[j]
         nvec = findall(x -> !in(indeps[i], x) && !in(indeps[j], x), fs.terms)
         tmpfs = dropmissing(fs[nvec, [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
         compared = (fs1 .- fs2)
-        if Base.all(compared .> 0.0)
+        if all(compared .> 0.0)
             complete[i, j] = 1
-        elseif Base.all(compared .< 0.0)
-            complete[i, j] = -1
+            complete[j, i] = -1
+        # elseif all(compared .< 0.0)
+        #     complete[i, j] = -1
         end
     end
 
