@@ -43,7 +43,7 @@ Stata `domin.ado` on Stata MP v.18.0 for a `domianance analysis involving 255 mo
 observations. For multithreading to be effective, please turn on multithreading when starting up Julia (`--threads=auto` or `"julia.NumThreads" : "auto"` in Visual Studio Editor settings).
 
 When performing dominance analysis with a complex survey data, you only need to specify the probability weights as a
-value for the `wts` option.[^7] 
+vector for the `wts` option.[^7] 
 
 ## Example
 
