@@ -233,6 +233,7 @@ function Base.show(io::IO, dom::Domin)
 
     # conditional dominance
     println(io, "\nConditional dominance:")
+    ntables = ceil(Int8, nvars / 8)
     if ntables > 1
         for i in 1:ntables
             fr = 1 + 7 * (i - 1)
@@ -261,7 +262,6 @@ function Base.show(io::IO, dom::Domin)
 
     # output complete dominance
     println(io, "\nComplete dominance proportions:")
-    ntables = ceil(Int8, nvars / 7)
     if ntables > 1
         for i in 1:ntables
             fr = 1 + 7*(i-1)
