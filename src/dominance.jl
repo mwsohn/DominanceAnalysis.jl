@@ -97,6 +97,7 @@ function dominance(_data::AbstractDataFrame,
         fs[i, :nterms] = length(vars)
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
+    println(fm[255])
 
     if multithreads == false
         for i = 1:nreg
@@ -108,7 +109,6 @@ function dominance(_data::AbstractDataFrame,
             verbose && show_progress(i, nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
-        println("Fit overall: ", fs[nreg,:r2m])
     end
 
     # additional contribution of each indep
@@ -122,7 +122,6 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
-    println("Fit overall after additional contribution: ", fs[nreg, :r2m])
     # complete dominance
     complete = zeros(Float32, nvars, nvars)
     for (i,j) in permutations(1:nvars,2)
@@ -135,7 +134,6 @@ function dominance(_data::AbstractDataFrame,
         complete[i, j] = sum(compared) / length(compared)
     end
 
-    println("Fit overall: ", fs[nreg, :r2m])
     # conditional dominance
     conditional_dom = zeros(Float64, nvars, nvars)
     conditional_dom[:, 1] = fs.r2m[1:nvars] .- fitnull
