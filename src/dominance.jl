@@ -53,7 +53,7 @@ function dominance(_data::AbstractDataFrame,
     df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
      
     # link and family
-    if link != nothing
+    if link == nothing
         link = canonical[family]
         if !in(fitstat, [:McFadden, :Nagelkerke])
             throw(ArgumentError(fitstat, " is not allowed"))
