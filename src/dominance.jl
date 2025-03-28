@@ -122,19 +122,18 @@ function dominance(_data::AbstractDataFrame,
     end
 
     # complete dominance
-    complete = zeros(Int8, nvars, nvars)
+    complete = zeros(Float32, nvars, nvars)
     for (i,j) in permutations(1:nvars,2)
         # find the rows whose rhs terms do not include indeps[i] and indeps[j]
         nvec = findall(x -> !in(indeps[i], x) && !in(indeps[j], x), fs.terms)
         tmpfs = dropmissing(fs[nvec, [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
-        compared = (fs1 .- fs2)
-        if all(compared .> 0.0)
-            complete[i, j] = 1
-        elseif all(compared .< 0.0)
-            complete[i, j] = -1
-        end
+        compared = (fs1 .- fs2) .> 0.0
+        complete[i, j] = sum(compared) / length(compared)
+        # elseif all(compared .< 0.0)
+        #     complete[i, j] = -1
+        # end
     end
 
     # conditional dominance
@@ -232,33 +231,6 @@ function Base.show(io::IO, dom::Domin)
         vlines=[1]
     )
 
-    # output complete dominance
-    println(io, "\nComplete dominance:")
-    ntables = ceil(Int8, nvars / 7)
-    if ntables > 1
-        for i in 1:ntables
-            fr = 1 + 7*(i-1)
-            to = min(nvars,7*i)
-            pretty_table(io,
-                dom.comstat[:, fr:to],
-                header=indepnames[fr:to],
-                row_labels=indepnames,
-                row_label_column_title="dominates?",
-                hlines=[0, 1, nvars + 1],
-                vlines=[1]
-            )
-        end
-    else
-        pretty_table(io,
-            dom.comstat,
-            header=indepnames,
-            row_labels=indepnames,
-            row_label_column_title="dominates?",
-            hlines=[0, 1, nvars + 1],
-            vlines=[1]
-        )
-    end
-
     # conditional dominance
     println(io, "\nConditional dominance:")
     if ntables > 1
@@ -266,7 +238,7 @@ function Base.show(io::IO, dom::Domin)
             fr = 1 + 7 * (i - 1)
             to = min(nvars, 7 * i)
             pretty_table(io,
-                dom.constat[:,fr:to],
+                dom.constat[:, fr:to],
                 header=collect(fr:to),
                 row_labels=indepnames,
                 row_label_column_title="Variables",
@@ -282,6 +254,34 @@ function Base.show(io::IO, dom::Domin)
             row_labels=indepnames,
             row_label_column_title="Variables",
             formatters=ft_printf("%6.4f", 1:nvars),
+            hlines=[0, 1, nvars + 1],
+            vlines=[1]
+        )
+    end
+
+    # output complete dominance
+    println(io, "\nComplete dominance proportions:")
+    ntables = ceil(Int8, nvars / 7)
+    if ntables > 1
+        for i in 1:ntables
+            fr = 1 + 7*(i-1)
+            to = min(nvars,7*i)
+            pretty_table(io,
+                dom.comstat[:, fr:to],
+                header=indepnames[fr:to],
+                row_labels=indepnames,
+                row_label_column_title="dominates?",
+                formatters=ft_printf("%6.4f", 1:nvars),
+                hlines=[0, 1, nvars + 1],
+                vlines=[1]
+            )
+        end
+    else
+        pretty_table(io,
+            dom.comstat,
+            header=indepnames,
+            row_labels=indepnames,
+            row_label_column_title="dominates?",
             hlines=[0, 1, nvars + 1],
             vlines=[1]
         )
