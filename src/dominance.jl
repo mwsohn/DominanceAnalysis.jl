@@ -332,7 +332,7 @@ function dominance_designations(dom)
     davg = mean(dom.constat, dims=2)
     ddesig = zeros(Int8, nvars, nvars)
     for (i, j) in permutations(1:nvars, 2)
-        if dom.comstat[i, j] = 1.0
+        if dom.comstat[i, j] == 1.0
             ddesig[i, j] = 1 # complete dominance
         elseif ddesig[i, j] != 1 && sum(dom.constat[i, :] .> dom.constat[j, :]) == nvars
             ddesig[i, j] = 2 # conditional dominance
