@@ -97,7 +97,6 @@ function dominance(_data::AbstractDataFrame,
         fs[i, :nterms] = length(vars)
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
-    println(fm[255])
 
     if multithreads == false
         for i = 1:nreg
