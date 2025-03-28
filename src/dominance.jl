@@ -35,6 +35,7 @@ Performs dominance analysis.
     - family - required for GLM models.
     - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
     - multithreads - set it to `false` to turn off multithreading
+    - wts - a vector of weights for weighted regressions
     
 """
 function dominance(_data::AbstractDataFrame,
@@ -177,15 +178,6 @@ function show_progress(i, nreg)
             println(" ", @sprintf("%5d", i))
         end
     end
-end
-
-function vidx(indeps, allvars, assign)
-    n = [1]
-    for v in indeps
-         i = findfirst(x -> x == v, allvars)
-         n = vcat(n, findall(x -> x == i, assign))
-    end
-    return n
 end
 
 function get_fitstat(df, fm; family=nothing, link=nothing, fitstat=nothing, wts=nothing)
