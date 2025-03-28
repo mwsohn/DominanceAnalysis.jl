@@ -108,6 +108,7 @@ function dominance(_data::AbstractDataFrame,
             verbose && show_progress(i, nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
+        println("Fit overall: ", fs[nreg,:r2m])
     end
 
     # additional contribution of each indep
@@ -121,6 +122,7 @@ function dominance(_data::AbstractDataFrame,
         end
     end
 
+    println("Fit overall after additional contribution: ", fs[nreg, :r2m])
     # complete dominance
     complete = zeros(Float32, nvars, nvars)
     for (i,j) in permutations(1:nvars,2)
@@ -131,11 +133,9 @@ function dominance(_data::AbstractDataFrame,
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
         compared = (fs1 .> fs2)
         complete[i, j] = sum(compared) / length(compared)
-        # elseif all(compared .< 0.0)
-        #     complete[i, j] = -1
-        # end
     end
 
+    println("Fit overall: ", fs[nreg, :r2m])
     # conditional dominance
     conditional_dom = zeros(Float64, nvars, nvars)
     conditional_dom[:, 1] = fs.r2m[1:nvars] .- fitnull
@@ -160,7 +160,7 @@ function dominance(_data::AbstractDataFrame,
         dep,
         indeps,
         covars,
-        fs[nreg, :r2m],
+        fs[nreg, :r2m], # fit_overall
         select(fs, Not(:terms_sorted)),
         domstat,
         complete,
