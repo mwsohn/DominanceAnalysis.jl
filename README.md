@@ -54,6 +54,7 @@ I am using `auto.dta` downloaded from http://www.stata-press.com/data/r13/auto.d
 
 ```
 julia> dominance(auto,:price, [:mpg, :trunk, :foreign, :weight])
+
 A total of 15 regressions will be estimated.
 
 Number of observations      =              74
@@ -61,25 +62,16 @@ Number of regression models =              15
 Overall Fit Statistic       =          0.5082
 
 
-Dominance Statistics and Ranking:
-─────────┬────────────────────────────────────────────────────────────────
-   price │ Dominance Statistic  Standardized Dominance            Ranking 
-─────────┼────────────────────────────────────────────────────────────────
-     mpg │              0.1031                  0.2028                  3
-   trunk │              0.0399                  0.0785                  4
- foreign │              0.1192                  0.2346                  2
-  weight │              0.2460                  0.4840                  1
-─────────┴────────────────────────────────────────────────────────────────
 
-Complete dominance:
-────────────┬─────────────────────────────
- dominates? │ mpg  trunk  foreign  weight 
-────────────┼─────────────────────────────
-        mpg │   0      0        0      -1
-      trunk │   0      0        0      -1
-    foreign │   0      0        0      -1
-     weight │   1      1        1       0
-────────────┴─────────────────────────────
+Dominance Statistics and Ranking:
+─────────┬─────────────────────────────────────────────────────────────
+   price │ General Dominance  Standardized Dominance           Ranking 
+─────────┼─────────────────────────────────────────────────────────────
+     mpg │            0.1031                  0.2028                 3
+   trunk │            0.0399                  0.0785                 4
+ foreign │            0.1192                  0.2346                 2
+  weight │            0.2460                  0.4840                 1
+─────────┴─────────────────────────────────────────────────────────────
 
 Conditional dominance:
 ───────────┬────────────────────────────────
@@ -90,12 +82,23 @@ Conditional dominance:
    foreign │ 0.0024  0.1010  0.1636  0.2099
     weight │ 0.2901  0.2553  0.2236  0.2149
 ───────────┴────────────────────────────────
+
+Complete dominance proportions:
+────────────┬─────────────────────────────────
+ dominates? │    mpg   trunk  foreign  weight 
+────────────┼─────────────────────────────────
+        mpg │ 0.0000  0.5000   0.5000  0.0000
+      trunk │ 0.5000  0.0000   0.2500  0.0000
+    foreign │ 0.5000  0.7500   0.0000  0.0000
+     weight │ 1.0000  1.0000   1.0000  0.0000
+────────────┴─────────────────────────────────
 ```
 
 ### 2. Linear regression with a set of variables
 
 ```
 julia> dominance(auto, :price, [:mpg, :trunk, :foreign, (:weight, :turn)])
+
 A total of 15 regressions will be estimated.
 
 Number of observations      =              74
@@ -106,24 +109,14 @@ Set    1 = (:weight, :turn)
 
 
 Dominance Statistics and Ranking:
-─────────┬───────────────────────────────────────────────────────────────
-   price │ Dominance Statistic  Standardized Dominance           Ranking 
-─────────┼───────────────────────────────────────────────────────────────
-     mpg │              0.1036                  0.1941                 2
-   trunk │              0.0388                  0.0727                 4
- foreign │              0.0881                  0.1651                 3
-   Set 1 │              0.3031                  0.5681                 1
-─────────┴───────────────────────────────────────────────────────────────
-
-Complete dominance:
-────────────┬────────────────────────────
- dominates? │ mpg  trunk  foreign  Set 1 
-────────────┼────────────────────────────
-        mpg │   0      0        0     -1
-      trunk │   0      0        0     -1
-    foreign │   0      0        0     -1
-      Set 1 │   1      1        1      0
-────────────┴────────────────────────────
+─────────┬─────────────────────────────────────────────────────────────
+   price │ General Dominance  Standardized Dominance           Ranking 
+─────────┼─────────────────────────────────────────────────────────────
+     mpg │            0.1036                  0.1941                 2
+   trunk │            0.0388                  0.0727                 4
+ foreign │            0.0881                  0.1651                 3
+   Set 1 │            0.3031                  0.5681                 1
+─────────┴─────────────────────────────────────────────────────────────
 
 Conditional dominance:
 ───────────┬────────────────────────────────
@@ -135,14 +128,24 @@ Conditional dominance:
      Set 1 │ 0.3776  0.3236  0.2711  0.2403
 ───────────┴────────────────────────────────
 
+Complete dominance proportions:
+────────────┬─────────────────────────────────
+ dominates? │    mpg   trunk  foreign   Set 1 
+────────────┼─────────────────────────────────
+        mpg │ 0.0000  0.7500   0.5000  0.0000
+      trunk │ 0.2500  0.0000   0.2500  0.0000
+    foreign │ 0.5000  0.7500   0.0000  0.0000
+      Set 1 │ 1.0000  1.0000   1.0000  0.0000
+────────────┴─────────────────────────────────
 ```
 
 ### 3. Logistic regression with a set of variables
 
 ```
-julia> using Statistics, GLM
+julia> using Statistics
 julia> auto.pricelow = auto.price .< mean(auto.price);
-julia> dominance(auto, :pricelow, [:mpg, :trunk, :foreign, (:weight, :turn)], link=LogitLink)
+julia> dominance(auto, :pricelow, [:mpg, :trunk, :foreign, (:weight, :turn)], family=Bernoulli, link=LogitLink)
+
 A total of 15 regressions will be estimated.
 
 Number of observations      =              74
@@ -153,24 +156,14 @@ Set    1 = (:weight, :turn)
 
 
 Dominance Statistics and Ranking:
-──────────┬───────────────────────────────────────────────────────────────
- pricelow │ Dominance Statistic  Standardized Dominance           Ranking 
-──────────┼───────────────────────────────────────────────────────────────
-      mpg │              0.0750                  0.1835                 3
-    trunk │              0.0158                  0.0386                 4
-  foreign │              0.1419                  0.3470                 2
-    Set 1 │              0.1762                  0.4309                 1
-──────────┴───────────────────────────────────────────────────────────────
-
-Complete dominance:
-────────────┬────────────────────────────
- dominates? │ mpg  trunk  foreign  Set 1 
-────────────┼────────────────────────────
-        mpg │   0      0        0     -1
-      trunk │   0      0        0     -1
-    foreign │   0      0        0      0
-      Set 1 │   1      1        0      0
-────────────┴────────────────────────────
+──────────┬─────────────────────────────────────────────────────────────
+ pricelow │ General Dominance  Standardized Dominance           Ranking 
+──────────┼─────────────────────────────────────────────────────────────
+      mpg │            0.0750                  0.1835                 3
+    trunk │            0.0158                  0.0386                 4
+  foreign │            0.1419                  0.3470                 2
+    Set 1 │            0.1762                  0.4309                 1
+──────────┴─────────────────────────────────────────────────────────────
 
 Conditional dominance:
 ───────────┬────────────────────────────────
@@ -181,6 +174,17 @@ Conditional dominance:
    foreign │ 0.0202  0.1384  0.1923  0.2167
      Set 1 │ 0.1571  0.1910  0.1845  0.1723
 ───────────┴────────────────────────────────
+
+Complete dominance proportions:
+────────────┬─────────────────────────────────
+ dominates? │    mpg   trunk  foreign   Set 1 
+────────────┼─────────────────────────────────
+        mpg │ 0.0000  0.7500   0.5000  0.0000
+      trunk │ 0.2500  0.0000   0.2500  0.0000
+    foreign │ 0.5000  0.7500   0.0000  0.5000
+      Set 1 │ 1.0000  1.0000   0.5000  0.0000
+────────────┴─────────────────────────────────
+
 
 ```
 
