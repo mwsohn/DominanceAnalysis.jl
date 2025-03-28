@@ -25,8 +25,8 @@
 - family - a distribution family. If not specified, a distribution will be
     automatically chosen based on the link function.
 - fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). The default is :McFadden.
-- multithreads - set it to `true` to use multithreads. 
-    This will speed up the execution by 2 times for complex models.
+- multithreads - set it to `false` to turn off the use of multithreading. 
+    Multithreading with 8 threads increased the execution speed by 2 times.
 - verbose - set it to `true` to turn on the verbose model that will display dots to be printed
     as a progress indicator
 - wts - specify a weight vector for complex survey data. 
@@ -40,8 +40,7 @@ program (https://journals.sagepub.com/doi/pdf/10.1177/1536867X211025837).
 
 If you turn on multithreading (`multithreads = true`), this Julia program is about 10 times faster than the
 Stata `domin.ado` on Stata MP v.18.0 for a `domianance analysis involving 255 models with a data set of over 200,000
-observations. For multithreading to be effective, please turn on multithreading when starting up Julia (`--threads=auto`
-or `"julia.NumThreads" : "auto"` in Visual Studio Editor settings).
+observations. For multithreading to be effective, please turn on multithreading when starting up Julia (`--threads=auto` or `"julia.NumThreads" : "auto"` in Visual Studio Editor settings).
 
 When performing dominance analysis with a complex survey data, you only need to specify the probability weights as a
 value for the `wts` option.[^7] 
@@ -189,7 +188,7 @@ Conditional dominance:
 
 [^1]: Joseph N. Luchman, 2013. "DOMIN: Stata module to conduct dominance analysis," Statistical Software Components S457629, Boston College Department of Economics, revised 07 Jan 2025. 
 
-[^2]: Azen R, Budescu DV. The dominance analysis approach for comparing predictors in multiple regression. Psychol Methods. 2003 Jun;8(2):129-48. doi: 10.1037/1082-989x.8.2.129. PMID: 12924811.
+[^2]: Azen R, Budescu DV. The dominance analysis approach for comparing predictors in multiple regression. Psychol Methods. 2003 Jun;8(2):129-48. https://doi.org/10.1037/1082-989x.8.2.129. PMID: 12924811.
 
 [^3]: Azen, R., & Traxel, N. (2009). Using Dominance Analysis to Determine Predictor Importance in Logistic Regression. Journal of Educational and Behavioral Statistics, 34(3), 319-347. https://doi.org/10.3102/1076998609332754 (Original work published 2009)
 
@@ -199,7 +198,7 @@ Conditional dominance:
 
 [^6]: Grömping, Ulrike. 2007. “Estimators of Relative Importance in Linear Regression Based on Variance Decomposition.” The American Statistician 61 (2): 139–47. https://doi.org/10.1198/000313007X188252.
 
-[^7]: Luchman, Joseph Nicholas. 2015. “Determining Subgroup Difference Importance with Complex Survey Designs: An Application of Weighted Dominance Analysis.” Survey Practice 8 (5). https:/​/​doi.org/​10.29115/​SP-2015-0022.
+[^7]: Luchman, Joseph Nicholas. 2015. “Determining Subgroup Difference Importance with Complex Survey Designs: An Application of Weighted Dominance Analysis.” Survey Practice 8 (5). https://​doi.org/​10.29115/​SP-2015-0022.
 
 
 
