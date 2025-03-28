@@ -2,7 +2,7 @@ module Dominance
 
 using Combinatorics, Stella, DataFrames, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Statistics, GLM
 
-export Domin, dominance, dominance_designations
+export Domin, dominance #, dominance_designations
 
 struct Domin
     nobs::Int64
