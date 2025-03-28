@@ -129,7 +129,7 @@ function dominance(_data::AbstractDataFrame,
         tmpfs = dropmissing(fs[nvec, [Symbol(i), Symbol(j)]])
         fs1 = vcat(fs[i, :r2m], tmpfs[:, 1])
         fs2 = vcat(fs[j, :r2m], tmpfs[:, 2])
-        compared = (fs1 .- fs2) .> 0.0
+        compared = (fs1 .> fs2)
         complete[i, j] = sum(compared) / length(compared)
         # elseif all(compared .< 0.0)
         #     complete[i, j] = -1
@@ -282,6 +282,7 @@ function Base.show(io::IO, dom::Domin)
             header=indepnames,
             row_labels=indepnames,
             row_label_column_title="dominates?",
+            formatters=ft_printf("%6.4f", 1:nvars),
             hlines=[0, 1, nvars + 1],
             vlines=[1]
         )
