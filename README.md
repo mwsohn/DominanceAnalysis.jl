@@ -38,9 +38,9 @@ in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a 
 and logistic regression models with or without weights have been tested against the output from Stata domin
 program (https://journals.sagepub.com/doi/pdf/10.1177/1536867X211025837).
 
-If you turn on multithreading (`multithreads = true`), this Julia program is about 10 times faster than the
-Stata `domin.ado` on Stata MP v.18.0 for a `domianance analysis involving 255 models with a data set of over 200,000
-observations. For multithreading to be effective, please turn on multithreading when starting up Julia (`--threads=auto` or `"julia.NumThreads" : "auto"` in Visual Studio Editor settings).
+If you turn on multithreading (`multithreads = true`), this program on Julia v1.11.4 is about 10 times faster than the Stata `domin.ado` on Stata MP v.18.0 for a domianance analysis involving 255 models with a data set of over 200,000 observations. 
+
+For multithreading to be effective, please turn on multithreading when starting up Julia (`--threads=auto` or `"julia.NumThreads" : "auto"` in Visual Studio Editor settings).
 
 When performing dominance analysis with a complex survey data, you only need to specify the probability weights as a
 vector for the `wts` option.[^7] 
