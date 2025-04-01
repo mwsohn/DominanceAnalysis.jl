@@ -55,9 +55,11 @@ function dominance(_data::AbstractDataFrame,
     # link and family
     if link == nothing && family != nothing
         link = canonical[family]
-        if !in(fitstat, [:McFadden, :Nagelkerke])
-            throw(ArgumentError(fitstat, " is not allowed"))
-        end
+    end
+
+    # fitstat
+    if link != nothing && !in(fitstat, [:McFadden, :Nagelkerke])
+        throw(ArgumentError(fitstat, " is not allowed"))
     end
 
     # get all combination of the indeps vector
