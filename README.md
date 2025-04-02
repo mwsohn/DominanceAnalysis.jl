@@ -9,7 +9,7 @@
  ## Syntax
 
 ```
-    dominance(df,dep,indeps; 
+    dominance(df, dep, indeps; 
       covars = [],
       link = nothing,
       family = nothing,
