@@ -9,7 +9,14 @@
  ## Syntax
 
 ```
-    dominance(df,dep,indeps; covars = [],link = nothing,family = nothing, verbose = false, multithreads = false, wts=nothing)
+    dominance(df,dep,indeps; 
+      covars = [],
+      link = nothing,
+      family = nothing,
+      fitstat = :McFadden, 
+      verbose = false, 
+      multithreads = false, 
+      wts=nothing)
 ```
 
 ### - Options
