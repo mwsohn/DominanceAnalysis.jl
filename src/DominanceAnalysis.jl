@@ -1,4 +1,4 @@
-module Dominance
+module DominanceAnalysis
 
 using Combinatorics, DataFrames, StatsModels, StatsBase, StatsAPI, Printf, PrettyTables, Statistics, GLM
 
