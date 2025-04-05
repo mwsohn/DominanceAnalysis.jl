@@ -31,7 +31,7 @@
     be used to determine the type of GLM model
 - family - a distribution family. If not specified, a distribution will be
     automatically chosen based on the link function.
-- fitstat - choose a pseudo R² method (:McFadden or :Nagelkerke). The default is :McFadden.
+- fitstat - choose a pseudo R² method (:McFadden, :Nagelkerke, or :CoxSnell). The default is :McFadden.
 - multithreads - set it to `false` to turn off the use of multithreading. 
     Multithreading with 8 threads increased the execution speed by 2 times.
 - verbose - set it to `true` to turn on the verbose model that will display dots to be printed
