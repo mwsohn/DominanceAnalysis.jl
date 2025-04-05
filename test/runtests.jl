@@ -1,8 +1,7 @@
-using CategoricalArrays, DataFrames, GLM, RDatasets, DominanceAnalysis, Stella
+using CategoricalArrays, DataFrames, GLM, RDatasets, DominanceAnalysis
 
 mtcars = dataset("datasets","mtcars")
-renvars!(mtcars)
-
+rename!(mtcars, :MPG => :mpg, :Cyl => :cyl, :AM => :am, :Carb => :carb, :WT => :wt)
 
 @testset "Linear Regression without sets" begin
 
