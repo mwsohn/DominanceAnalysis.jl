@@ -19,7 +19,7 @@ end
 
 """
     dominance(df::AbstractDataFrame, dep::Symbol, indeps::Vector; 
-        covars = [], fitstat = :McFadden, link = nothing, family = nothing, verbose = true,
+        covars = [], fitstat = :McFadden, link = nothing, family = nothing,
         multithreads = true, wts = nothing)
 
 Performs dominance analysis. 
@@ -33,7 +33,6 @@ Performs dominance analysis.
     - fitstat - R2 variant to be used for GLM models. Currently, :McFadden (default) and :Nagelkerke are available
     - link - link function for GLM models. If it is not set, a canonical link function will be chosen.
     - family - required for GLM models.
-    - verbose - a dot for every 10 regressions. Only used for 100 regressions or more
     - multithreads - set it to `false` to turn off multithreading
     - wts - a vector of weights for weighted regressions
     
@@ -45,7 +44,6 @@ function dominance(_data::AbstractDataFrame,
     fitstat=:McFadden,
     link=nothing,
     family=nothing,
-    verbose=true,
     multithreads=true,
     wts=nothing)
 
@@ -100,14 +98,17 @@ function dominance(_data::AbstractDataFrame,
         push!(fm, get_formula(dep, vcat(vars, covars)))
     end
 
+    counter = 1
     if multithreads == false
         for i = 1:nreg
-            verbose && show_progress(i,nreg)
+            counter += 1
+            verbose && show_progress(counter,nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
-            verbose && show_progress(i, nreg)
+            counter += 1
+            verbose && show_progress(counter, nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
@@ -169,12 +170,13 @@ end
 
 function show_progress(i, nreg)
     if nreg >= 100
-        if mod(i, 20) == 0
+        if mod(i, 50) == 0
             print(".")
         end
-        if mod(i, 1600) == 0
-            println(" ", @sprintf("%5d", i))
+        if mod(i, 4000) == 0
+            println(i)
         end
+        print("\n")
     end
 end
 
