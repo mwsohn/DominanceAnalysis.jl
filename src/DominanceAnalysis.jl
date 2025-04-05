@@ -56,7 +56,7 @@ function dominance(_data::AbstractDataFrame,
     end
 
     # fitstat
-    if link != nothing && !in(fitstat, [:McFadden, :Nagelkerke])
+    if link != nothing && !in(fitstat, [:McFadden, :Nagelkerke, :CoxSnell])
         throw(ArgumentError(fitstat, " is not allowed"))
     end
 
