@@ -4,7 +4,7 @@
 
   ## Installation
 
- `] add https://github.com/mwsohn/Dominance.jl`
+ `] add https://github.com/mwsohn/DominanceAnalysis.jl`
 
  ## Syntax
 
