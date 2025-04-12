@@ -2,7 +2,7 @@
  A Julia package for conducting dominance analysis. An excellent introduction and formulas on `dominance analysis` by Joseph Luchman can be found 
  at https://cran.r-project.org/web/packages/domir/vignettes/domir_basics.html. See below for references as well.[^1][^2][^3][^4][^5][^6]
 
-  ## Installation
+ ## Installation
 
  `] add https://github.com/mwsohn/DominanceAnalysis.jl`
 
@@ -19,7 +19,7 @@
       wts=nothing)
 ```
 
-### - Options
+### 1. Options
 - df - input data in a DataFrame
 - dep - dependent variable
 - indeps - a vector of independent variables. A `set` can be
@@ -38,7 +38,7 @@
     as a progress indicator
 - wts - specify a weight vector for complex survey data. 
 
-### - Notes
+### 2. Notes
 
 All variables must be in Symbols. A group of variables to be treated as a `set` should be entered as a tuple
 in the `indeps` vector. All multi-valued CategoricalArrays will be treated as a set by default. Linear regression
@@ -52,7 +52,7 @@ For multithreading to be effective, please turn on multithreading when starting 
 When performing dominance analysis with a complex survey data, you only need to specify the probability weights as a
 vector for the `wts` option.[^7] 
 
-## Example
+## Examples
 
 I am using `auto.dta` downloaded from http://www.stata-press.com/data/r13/auto.dta, converted to Julia DataFrame using
 `read_stata` in Stella.jl.
