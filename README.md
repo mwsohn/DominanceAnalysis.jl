@@ -4,7 +4,7 @@
 
  ## Installation
 
- `] add https://github.com/mwsohn/DominanceAnalysis.jl`
+ `] add DominanceAnalysis`
 
  ## Syntax
 
