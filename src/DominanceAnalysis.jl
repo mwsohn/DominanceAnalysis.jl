@@ -45,7 +45,8 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     multithreads=true,
-    wts=nothing)
+    wts=nothing,
+    verbose=true)
 
     # prepare the data set
     df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
