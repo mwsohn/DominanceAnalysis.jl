@@ -151,7 +151,7 @@ function dominance(_data::AbstractDataFrame,
     ranking = ordinalrank(sta_dom, rev=true)
     domstat = hcat(gen_dom, sta_dom, ranking)
 
-    return Dominance.Domin(
+    return DominanceAnalysis.Domin(
         nrow(df),
         nreg,
         dep,
