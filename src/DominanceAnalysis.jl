@@ -165,18 +165,6 @@ function dominance(_data::AbstractDataFrame,
     )
 end
 
-# function show_progress(i, nreg)
-#     if nreg >= 100
-#         if mod(i, 50) == 0
-#             print(".")
-#         end
-#         if mod(i, 4000) == 0
-#             println(i)
-#         end
-#         print("\n")
-#     end
-# end
-
 function get_fitstat(df, fm; family=nothing, link=nothing, fitstat=nothing, wts=nothing)
     if link == nothing
         return r2(lm(fm, df))
