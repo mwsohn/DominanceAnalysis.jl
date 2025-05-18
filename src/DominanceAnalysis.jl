@@ -35,7 +35,6 @@ Performs dominance analysis.
     - family - required for GLM models.
     - multithreads - set it to `false` to turn off multithreading
     - wts - a vector of weights for weighted regressions
-    
 """
 function dominance(_data::AbstractDataFrame,
     dep::Symbol, # dependent variable name
@@ -45,8 +44,7 @@ function dominance(_data::AbstractDataFrame,
     link=nothing,
     family=nothing,
     multithreads=true,
-    wts=nothing,
-    verbose=true)
+    wts=nothing)
 
     # prepare the data set
     df = dropmissing(select(_data, untuple(vcat(dep, indeps, covars))))
@@ -103,13 +101,11 @@ function dominance(_data::AbstractDataFrame,
     if multithreads == false
         for i = 1:nreg
             counter += 1
-            verbose && show_progress(counter,nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     else
         Threads.@threads for i = 1:nreg
             counter += 1
-            verbose && show_progress(counter, nreg)
             fs[i, :r2m] = get_fitstat(df, fm[i], family=family, link=link, fitstat=fitstat, wts=wts)
         end
     end
@@ -169,17 +165,17 @@ function dominance(_data::AbstractDataFrame,
     )
 end
 
-function show_progress(i, nreg)
-    if nreg >= 100
-        if mod(i, 50) == 0
-            print(".")
-        end
-        if mod(i, 4000) == 0
-            println(i)
-        end
-        print("\n")
-    end
-end
+# function show_progress(i, nreg)
+#     if nreg >= 100
+#         if mod(i, 50) == 0
+#             print(".")
+#         end
+#         if mod(i, 4000) == 0
+#             println(i)
+#         end
+#         print("\n")
+#     end
+# end
 
 function get_fitstat(df, fm; family=nothing, link=nothing, fitstat=nothing, wts=nothing)
     if link == nothing
