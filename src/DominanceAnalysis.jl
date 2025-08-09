@@ -38,7 +38,7 @@ Performs dominance analysis.
 """
 function dominance(_data::AbstractDataFrame,
     dep::Symbol, # dependent variable name
-    indeps::Vector; # independent variables in a vector, sets are allowed in tuples
+    indeps::Vector; # independent variables in a vector, sets (in tuples) are allowed
     covars=[],
     fitstat=:McFadden,
     link=nothing,
@@ -59,7 +59,7 @@ function dominance(_data::AbstractDataFrame,
         throw(ArgumentError(fitstat, " is not allowed"))
     end
 
-    # get all combination of the indeps vector
+    # get all combinations of the indeps vector
     nvars = length(indeps)
     vvec = collect(combinations(collect(1:nvars)))
     nreg = length(vvec)
